@@ -65,7 +65,7 @@
 
     <script type="text/babel">
         // -------------------------------------------------------------------
-        // CHAPTER KPI TRACKER - WITH PHOTO UPLOAD
+        // CHAPTER KPI TRACKER - WITH CHAPTER SELECTION IN REGISTRATION
         // -------------------------------------------------------------------
         
         // === CLEAR ALL OLD DATA - FRESH START ===
@@ -105,12 +105,34 @@
             });
         };
 
-        // ============= INITIAL DATA - FRESH =============
-        
-        // Default avatar function (now returns placeholder)
+        // Generate referral code otomatis
+        function generateReferralCode(name, userId) {
+            const namePart = name.replace(/\s/g, '').substring(0, 4).toUpperCase();
+            const uniqueId = userId.toString().padStart(3, '0');
+            return `${namePart}${uniqueId}`;
+        }
+
+        // Daftar chapter yang tersedia
+        const availableChapters = [
+            { id: 'JKT1', name: 'Jakarta 1', region: 'Jakarta', leader: null, members: [] },
+            { id: 'JKT2', name: 'Jakarta 2', region: 'Jakarta', leader: null, members: [] },
+            { id: 'BDG1', name: 'Bandung 1', region: 'Bandung', leader: null, members: [] },
+            { id: 'SBY1', name: 'Surabaya 1', region: 'Surabaya', leader: null, members: [] },
+            { id: 'MDN1', name: 'Medan 1', region: 'Medan', leader: null, members: [] },
+            { id: 'BALI1', name: 'Bali 1', region: 'Bali', leader: null, members: [] },
+            { id: 'JOG1', name: 'Jogja 1', region: 'Jogja', leader: null, members: [] },
+            { id: 'MAK1', name: 'Makassar 1', region: 'Makassar', leader: null, members: [] }
+        ];
+
+        // Simpan daftar chapter ke localStorage
+        localStorage.setItem('available_chapters', JSON.stringify(availableChapters));
+
+        // Default avatar function
         const getDefaultAvatar = (name) => {
             return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=2563eb&color=fff&size=128`;
         };
+        
+        // ============= INITIAL DATA - FRESH =============
         
         // 1. SUPER ADMIN
         const superAdmin = {
@@ -130,10 +152,17 @@
             avatar: getDefaultAvatar('Rizky Fadillah'),
             isApproved: true,
             totalPoints: 2670,
-            weeklyAverage: 96
+            weeklyAverage: 96,
+            referralCode: 'RIZK001',
+            referredBy: null,
+            level: 1,
+            position: 'Super Admin',
+            parentId: null,
+            children: [2, 3, 4, 5, 6, 7, 8],
+            chapterRole: 'super_admin'
         };
 
-        // 2. MEMBERS with some custom photos (using placeholder first)
+        // 2. MEMBERS
         const members = [
             {
                 id: 2,
@@ -151,9 +180,15 @@
                 joinDate: '2026-01-10',
                 avatar: getDefaultAvatar('Dimas Prayoga'),
                 isApproved: true,
-                referredBy: 1,
+                referredBy: 'RIZK001',
                 totalPoints: 1320,
-                weeklyAverage: 84
+                weeklyAverage: 84,
+                referralCode: 'DIMA002',
+                level: 2,
+                position: 'Co-Leader',
+                parentId: 1,
+                children: [3, 6],
+                chapterRole: 'co-leader'
             },
             {
                 id: 3,
@@ -171,9 +206,15 @@
                 joinDate: '2026-02-01',
                 avatar: getDefaultAvatar('Sinta Dewi'),
                 isApproved: true,
-                referredBy: 2,
+                referredBy: 'DIMA002',
                 totalPoints: 590,
-                weeklyAverage: 68
+                weeklyAverage: 68,
+                referralCode: 'SINT003',
+                level: 3,
+                position: 'Member',
+                parentId: 2,
+                children: [7],
+                chapterRole: 'member'
             },
             {
                 id: 4,
@@ -187,13 +228,19 @@
                 password: 'bambang123',
                 role: 'member',
                 badge: 'Member',
-                chapter: 'Jakarta 1',
+                chapter: 'Bandung 1',
                 joinDate: '2026-02-10',
                 avatar: getDefaultAvatar('Bambang Setiawan'),
                 isApproved: true,
-                referredBy: 1,
+                referredBy: 'RIZK001',
                 totalPoints: 380,
-                weeklyAverage: 42
+                weeklyAverage: 42,
+                referralCode: 'BAMB004',
+                level: 2,
+                position: 'Member',
+                parentId: 1,
+                children: [],
+                chapterRole: 'member'
             },
             {
                 id: 5,
@@ -207,13 +254,19 @@
                 password: 'maya123',
                 role: 'member',
                 badge: 'Member',
-                chapter: 'Jakarta 1',
+                chapter: 'Surabaya 1',
                 joinDate: '2026-02-15',
                 avatar: getDefaultAvatar('Maya Sari'),
                 isApproved: true,
-                referredBy: 2,
+                referredBy: 'RIZK001',
                 totalPoints: 210,
-                weeklyAverage: 35
+                weeklyAverage: 35,
+                referralCode: 'MAYA005',
+                level: 2,
+                position: 'Member',
+                parentId: 1,
+                children: [],
+                chapterRole: 'member'
             },
             {
                 id: 6,
@@ -231,9 +284,15 @@
                 joinDate: '2026-02-16',
                 avatar: getDefaultAvatar('Agus Pratama'),
                 isApproved: true,
-                referredBy: 1,
+                referredBy: 'DIMA002',
                 totalPoints: 180,
-                weeklyAverage: 30
+                weeklyAverage: 30,
+                referralCode: 'AGUS006',
+                level: 3,
+                position: 'Member',
+                parentId: 2,
+                children: [],
+                chapterRole: 'member'
             },
             {
                 id: 7,
@@ -251,9 +310,15 @@
                 joinDate: '2026-02-18',
                 avatar: getDefaultAvatar('Rina Wijaya'),
                 isApproved: true,
-                referredBy: 3,
+                referredBy: 'SINT003',
                 totalPoints: 150,
-                weeklyAverage: 25
+                weeklyAverage: 25,
+                referralCode: 'RINA007',
+                level: 4,
+                position: 'Member',
+                parentId: 3,
+                children: [],
+                chapterRole: 'member'
             },
             {
                 id: 8,
@@ -267,13 +332,19 @@
                 password: 'dedi123',
                 role: 'member',
                 badge: 'Member',
-                chapter: 'Jakarta 1',
+                chapter: 'Medan 1',
                 joinDate: '2026-02-20',
                 avatar: getDefaultAvatar('Dedi Kurniawan'),
                 isApproved: true,
-                referredBy: 2,
+                referredBy: 'RIZK001',
                 totalPoints: 120,
-                weeklyAverage: 20
+                weeklyAverage: 20,
+                referralCode: 'DEDI008',
+                level: 2,
+                position: 'Member',
+                parentId: 1,
+                children: [],
+                chapterRole: 'member'
             }
         ];
 
@@ -282,6 +353,25 @@
         
         // === SAVE KE LOCALSTORAGE ===
         localStorage.setItem('chapter_users', JSON.stringify(allUsers));
+
+        // Update chapter members
+        const updateChapterMembers = () => {
+            const chapters = JSON.parse(localStorage.getItem('available_chapters')) || [];
+            chapters.forEach(chapter => {
+                chapter.members = allUsers
+                    .filter(user => user.chapter === chapter.name && user.role === 'member')
+                    .map(user => user.id);
+                
+                // Tentukan leader untuk setiap chapter (member dengan badge Champion tertua)
+                const chapterMembers = allUsers.filter(user => user.chapter === chapter.name);
+                const champion = chapterMembers.find(user => user.badge === 'Champion');
+                if (champion) {
+                    chapter.leader = champion.id;
+                }
+            });
+            localStorage.setItem('available_chapters', JSON.stringify(chapters));
+        };
+        updateChapterMembers();
 
         // === INIT KPI DATA ===
         const weekInfo = getWeekRange();
@@ -445,7 +535,7 @@
                 localStorage.removeItem('chapter_currentUser');
             },
             
-            // ============= REGISTER =============
+            // ============= REGISTER DENGAN CHAPTER =============
             register: function(formData) {
                 const users = JSON.parse(localStorage.getItem('chapter_users')) || [];
                 
@@ -453,8 +543,18 @@
                     return { success: false, message: 'Email sudah terdaftar' };
                 }
 
+                // Validasi referral code jika diisi
+                let referrer = null;
+                if (formData.referralCode) {
+                    referrer = users.find(u => u.referralCode === formData.referralCode);
+                    if (!referrer) {
+                        return { success: false, message: 'Kode referral tidak valid' };
+                    }
+                }
+
+                const newUserId = users.length + 1;
                 const newUser = {
-                    id: users.length + 1,
+                    id: newUserId,
                     name: formData.name,
                     businessName: formData.businessName,
                     businessDesc: formData.businessDesc || '',
@@ -465,17 +565,42 @@
                     password: formData.password,
                     role: 'member',
                     badge: 'Member',
-                    chapter: 'Jakarta 1',
+                    chapter: formData.chapter || 'Jakarta 1',  // <-- PAKAI DARI FORM
                     joinDate: new Date().toISOString().split('T')[0],
-                    avatar: formData.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name)}&background=2563eb&color=fff&size=128`,
+                    avatar: formData.avatar || getDefaultAvatar(formData.name),
                     isApproved: true,
                     referredBy: formData.referralCode || null,
                     totalPoints: 0,
-                    weeklyAverage: 0
+                    weeklyAverage: 0,
+                    // Hierarchy fields
+                    referralCode: generateReferralCode(formData.name, newUserId),
+                    level: referrer ? referrer.level + 1 : 2,  // Level 2 jika punya referrer, 2 jika direct (level 1 adalah super admin)
+                    position: 'Member',
+                    parentId: referrer ? referrer.id : 1,  // Jika tidak ada referrer, parentnya super admin (id=1)
+                    children: [],
+                    chapterRole: 'member',
+                    chapterJoinDate: new Date().toISOString().split('T')[0]
                 };
 
                 users.push(newUser);
                 localStorage.setItem('chapter_users', JSON.stringify(users));
+
+                // Update parent's children
+                if (newUser.parentId) {
+                    const parent = users.find(u => u.id === newUser.parentId);
+                    if (parent) {
+                        parent.children.push(newUserId);
+                        localStorage.setItem('chapter_users', JSON.stringify(users));
+                    }
+                }
+
+                // Update chapter members
+                const chapters = JSON.parse(localStorage.getItem('available_chapters')) || [];
+                const targetChapter = chapters.find(c => c.name === newUser.chapter);
+                if (targetChapter) {
+                    targetChapter.members.push(newUserId);
+                    localStorage.setItem('available_chapters', JSON.stringify(chapters));
+                }
                 
                 return { success: true, message: 'Registrasi berhasil! Silakan login.' };
             },
@@ -515,6 +640,10 @@
                 const users = JSON.parse(localStorage.getItem('chapter_users')) || [];
                 return users.filter(u => u.role === 'member');
             },
+
+            getChapters: function() {
+                return JSON.parse(localStorage.getItem('available_chapters')) || [];
+            },
             
             getChapterSummary: function() {
                 const members = this.getAllMembers().filter(m => m.isApproved);
@@ -540,6 +669,50 @@
                     membersWithKPI,
                     membersCompleteKPI
                 };
+            },
+            
+            // ============= HIERARCHY FUNCTIONS =============
+            getDownline: function(userId, level = 'all') {
+                const users = JSON.parse(localStorage.getItem('chapter_users')) || [];
+                const user = users.find(u => u.id === userId);
+                if (!user) return [];
+                
+                if (level === 'direct') {
+                    // Hanya bawahan langsung
+                    return users.filter(u => u.parentId === userId);
+                } else {
+                    // Semua bawahan (rekursif)
+                    let downline = [];
+                    const directDownline = users.filter(u => u.parentId === userId);
+                    
+                    directDownline.forEach(child => {
+                        downline.push(child);
+                        downline = downline.concat(this.getDownline(child.id, 'all'));
+                    });
+                    
+                    return downline;
+                }
+            },
+
+            getUpline: function(userId) {
+                const users = JSON.parse(localStorage.getItem('chapter_users')) || [];
+                const user = users.find(u => u.id === userId);
+                if (!user || !user.parentId) return [];
+                
+                const upline = [];
+                let currentId = user.parentId;
+                
+                while (currentId) {
+                    const parent = users.find(u => u.id === currentId);
+                    if (parent) {
+                        upline.push(parent);
+                        currentId = parent.parentId;
+                    } else {
+                        currentId = null;
+                    }
+                }
+                
+                return upline;
             },
             
             // ============= KPI FUNCTIONS =============
@@ -638,6 +811,12 @@
                         kpiCompleted: weekKPI?.kpi?.filter(k => k.completed).length || 0
                     };
                 }).sort((a, b) => b.currentWeekPoints - a.currentWeekPoints);
+            },
+
+            // Fungsi untuk mendapatkan member per chapter
+            getMembersByChapter: function(chapterName) {
+                const members = this.getAllMembers();
+                return members.filter(m => m.chapter === chapterName);
             }
         };
 
@@ -667,13 +846,11 @@
                 const file = e.target.files[0];
                 if (!file) return;
 
-                // Check file type
                 if (!file.type.startsWith('image/')) {
                     alert('File harus berupa gambar (jpg, png, etc)');
                     return;
                 }
 
-                // Check file size (max 2MB)
                 if (file.size > 2 * 1024 * 1024) {
                     alert('Ukuran file maksimal 2MB');
                     return;
@@ -692,7 +869,6 @@
                     alert('Gagal upload foto. Coba lagi.');
                 } finally {
                     setUploading(false);
-                    // Clear input
                     e.target.value = '';
                 }
             };
@@ -728,6 +904,10 @@
         // ==================== MODAL PROFIL MEMBER ====================
         const MemberProfileModal = ({ member, isOpen, onClose }) => {
             if (!isOpen || !member) return null;
+
+            // Dapatkan upline dan downline
+            const upline = AppState.getUpline(member.id);
+            const downline = AppState.getDownline(member.id, 'direct');
 
             return (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" onClick={onClose}>
@@ -767,6 +947,60 @@
                                 </div>
                             </div>
 
+                            {/* Informasi Chapter & Hierarchy */}
+                            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-5 rounded-xl mb-6">
+                                <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                                    <i className="fas fa-sitemap mr-2 text-green-600"></i>
+                                    Struktur Chapter
+                                </h4>
+                                <div className="space-y-3">
+                                    <div className="flex justify-between items-center py-2 border-b border-green-100">
+                                        <span className="text-gray-700 font-medium">Chapter</span>
+                                        <span className="font-semibold text-gray-900">{member.chapter}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center py-2 border-b border-green-100">
+                                        <span className="text-gray-700 font-medium">Level</span>
+                                        <span className="font-semibold text-gray-900">{member.level}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center py-2 border-b border-green-100">
+                                        <span className="text-gray-700 font-medium">Posisi</span>
+                                        <span className="font-semibold text-gray-900">{member.position}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center py-2 border-b border-green-100">
+                                        <span className="text-gray-700 font-medium">Kode Referral</span>
+                                        <span className="font-semibold text-blue-600">{member.referralCode}</span>
+                                    </div>
+                                    
+                                    {/* Upline (Atasan) */}
+                                    {upline.length > 0 && (
+                                        <div className="py-2">
+                                            <span className="text-gray-700 font-medium block mb-2">Atasan:</span>
+                                            {upline.map((parent, idx) => (
+                                                <div key={parent.id} className="flex items-center ml-2 mb-1">
+                                                    <i className="fas fa-arrow-up text-xs text-green-500 mr-2"></i>
+                                                    <img src={parent.avatar} className="w-6 h-6 rounded-full mr-2" />
+                                                    <span className="text-sm">{parent.name} - {parent.position}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                    
+                                    {/* Downline (Bawahan) */}
+                                    {downline.length > 0 && (
+                                        <div className="py-2">
+                                            <span className="text-gray-700 font-medium block mb-2">Bawahan Langsung ({downline.length}):</span>
+                                            {downline.map(child => (
+                                                <div key={child.id} className="flex items-center ml-2 mb-1">
+                                                    <i className="fas fa-arrow-down text-xs text-blue-500 mr-2"></i>
+                                                    <img src={child.avatar} className="w-6 h-6 rounded-full mr-2" />
+                                                    <span className="text-sm">{child.name}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
                             {/* Informasi Bisnis */}
                             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-xl mb-6">
                                 <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
@@ -784,10 +1018,6 @@
                                             <p className="text-gray-800 bg-white p-3 rounded-lg">{member.businessDesc}</p>
                                         </div>
                                     )}
-                                    <div className="flex justify-between items-center py-2">
-                                        <span className="text-gray-700 font-medium">Chapter</span>
-                                        <span className="font-semibold text-gray-900">{member.chapter}</span>
-                                    </div>
                                 </div>
                             </div>
 
@@ -849,12 +1079,6 @@
                                         <p className="text-2xl font-bold text-blue-600">{member.weeklyAverage || 0}/week</p>
                                     </div>
                                 </div>
-                                {member.referredBy && (
-                                    <div className="mt-4 text-sm text-gray-600 text-center">
-                                        <i className="fas fa-user-plus mr-1"></i>
-                                        Direfer oleh: Member #{member.referredBy}
-                                    </div>
-                                )}
                             </div>
                         </div>
 
@@ -1079,7 +1303,7 @@
             );
         };
 
-        // ==================== REGISTER PAGE ====================
+        // ==================== REGISTER PAGE DENGAN CHAPTER ====================
         const Register = ({ onRegister }) => {
             const [formData, setFormData] = React.useState({
                 name: '',
@@ -1091,7 +1315,8 @@
                 email: '',
                 password: '',
                 confirmPassword: '',
-                referralCode: ''
+                referralCode: '',
+                chapter: 'Jakarta 1'  // Default chapter
             });
             const [avatar, setAvatar] = React.useState(null);
             const [avatarPreview, setAvatarPreview] = React.useState(null);
@@ -1099,6 +1324,14 @@
             const [success, setSuccess] = React.useState('');
             const [uploading, setUploading] = React.useState(false);
             const fileInputRef = React.useRef();
+
+            // Dapatkan daftar chapter dari localStorage
+            const [chapters, setChapters] = React.useState([]);
+
+            React.useEffect(() => {
+                const savedChapters = JSON.parse(localStorage.getItem('available_chapters')) || [];
+                setChapters(savedChapters);
+            }, []);
 
             const handleChange = (e) => {
                 setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -1156,7 +1389,8 @@
                     setSuccess(result.message);
                     setFormData({
                         name: '', businessName: '', businessDesc: '', socialLinkedin: '', socialInstagram: '',
-                        phone: '', email: '', password: '', confirmPassword: '', referralCode: ''
+                        phone: '', email: '', password: '', confirmPassword: '', referralCode: '',
+                        chapter: 'Jakarta 1'
                     });
                     setAvatar(null);
                     setAvatarPreview(null);
@@ -1286,11 +1520,38 @@
                                             placeholder="••••••••" required />
                                     </div>
                                     
+                                    {/* DROPDOWN CHAPTER */}
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Kode Referral (Optional)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Pilih Chapter *
+                                        </label>
+                                        <select
+                                            name="chapter"
+                                            value={formData.chapter}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+                                            required
+                                        >
+                                            <option value="">-- Pilih Chapter --</option>
+                                            {chapters.map(chapter => (
+                                                <option key={chapter.id} value={chapter.name}>
+                                                    {chapter.name} ({chapter.region})
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            Pilih chapter terdekat dengan lokasi bisnis Anda
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Kode Referral (Opsional)</label>
                                         <input type="text" name="referralCode" value={formData.referralCode} onChange={handleChange}
                                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                            placeholder="Contoh: DIMAS001" />
+                                            placeholder="Contoh: DIMA002" />
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            Masukkan kode referral dari member yang mengajak Anda
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -1298,7 +1559,7 @@
                             <div className="bg-blue-50 p-4 rounded-lg">
                                 <p className="text-sm text-blue-800">
                                     <i className="fas fa-info-circle mr-2"></i>
-                                    Setelah registrasi, akun Anda akan diverifikasi oleh Super Admin. Maksimal 1x24 jam.
+                                    Dengan mendaftar, Anda akan mendapatkan kode referral unik untuk mengajak member lain.
                                 </p>
                             </div>
                             
@@ -1324,6 +1585,8 @@
             const allMembersKPI = state.getAllMembersKPI();
             
             const memberRank = allMembersKPI.findIndex(m => m.id === currentUser.id) + 1;
+            const downlineCount = state.getDownline(currentUser.id, 'direct').length;
+            const totalDownline = state.getDownline(currentUser.id, 'all').length;
             
             const handleUpdateKPI = (kpiId, value, type) => {
                 state.updateKPI(currentUser.id, kpiId, value, type);
@@ -1332,7 +1595,6 @@
 
             const handleAvatarUpdate = (newAvatar) => {
                 setAvatar(newAvatar);
-                // Update currentUser in state
                 currentUser.avatar = newAvatar;
             };
 
@@ -1371,6 +1633,14 @@
                             <div>
                                 <p className="text-xs text-gray-500">Phone</p>
                                 <p className="font-medium text-sm">{currentUser?.phone}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs text-gray-500">Chapter</p>
+                                <p className="font-medium text-sm">{currentUser?.chapter}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs text-gray-500">Kode Referral</p>
+                                <p className="font-medium text-sm text-blue-600">{currentUser?.referralCode}</p>
                             </div>
                             {currentUser?.socialLinkedin && (
                                 <div>
@@ -1419,6 +1689,20 @@
                         </Card>
                     </div>
 
+                    {/* Network Stats */}
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                        <Card className="bg-gradient-to-br from-purple-50 to-pink-50">
+                            <p className="text-sm text-gray-600">Bawahan Langsung</p>
+                            <p className="text-2xl font-bold text-purple-600">{downlineCount}</p>
+                            <p className="text-xs text-gray-500 mt-1">Total: {totalDownline} orang</p>
+                        </Card>
+                        <Card className="bg-gradient-to-br from-orange-50 to-red-50">
+                            <p className="text-sm text-gray-600">Level</p>
+                            <p className="text-2xl font-bold text-orange-600">{currentUser?.level}</p>
+                            <p className="text-xs text-gray-500 mt-1">{currentUser?.position}</p>
+                        </Card>
+                    </div>
+
                     {/* Current Week KPI */}
                     <div className="mb-6">
                         <div className="flex items-center justify-between mb-4">
@@ -1464,7 +1748,7 @@
                         </div>
                     </Card>
 
-                    {/* Leaderboard Preview - BISA DI KLIK */}
+                    {/* Leaderboard Preview */}
                     <div>
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="font-semibold text-gray-900">Leaderboard Minggu Ini</h3>
@@ -1514,6 +1798,7 @@
                             <div className="cursor-pointer" onClick={() => setShowProfile(true)}>
                                 <p className="font-semibold text-gray-900">{member.name}</p>
                                 <p className="text-xs text-gray-600">{member.businessName}</p>
+                                <p className="text-xs text-gray-400">{member.chapter}</p>
                             </div>
                         </div>
                         <div className="text-right">
@@ -1540,6 +1825,7 @@
             const chapterSummary = state.getChapterSummary();
             const allMembersKPI = state.getAllMembersKPI();
             const weekInfo = getWeekRange();
+            const chapters = state.getChapters();
 
             const handleAvatarUpdate = (newAvatar) => {
                 setAvatar(newAvatar);
@@ -1585,6 +1871,54 @@
                             <p className="text-2xl font-bold text-purple-600">{chapterSummary.completionRate}%</p>
                             <p className="text-xs text-gray-500 mt-1">{chapterSummary.membersCompleteKPI}/{chapterSummary.membersWithKPI} member</p>
                         </Card>
+                        <Card className="bg-gradient-to-br from-orange-50 to-red-50">
+                            <p className="text-xs text-gray-600">Total Chapter</p>
+                            <p className="text-2xl font-bold text-orange-600">{chapters.length}</p>
+                            <p className="text-xs text-gray-500 mt-1">Aktif semua</p>
+                        </Card>
+                    </div>
+
+                    {/* Chapter Overview */}
+                    <div className="mb-8">
+                        <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                            <i className="fas fa-map-marker-alt mr-2 text-blue-600"></i>
+                            Chapter Overview
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {chapters.map(chapter => {
+                                const chapterMembers = allMembersKPI.filter(m => m.chapter === chapter.name);
+                                const avgPoints = chapterMembers.length > 0 
+                                    ? Math.round(chapterMembers.reduce((sum, m) => sum + m.currentWeekPoints, 0) / chapterMembers.length) 
+                                    : 0;
+                                
+                                return (
+                                    <Card key={chapter.id} className="border-l-4 border-blue-400">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <h3 className="font-bold text-gray-900">{chapter.name}</h3>
+                                            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                                {chapter.region}
+                                            </span>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2 text-sm mb-2">
+                                            <div>
+                                                <p className="text-gray-500">Member</p>
+                                                <p className="font-semibold">{chapter.members.length}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-gray-500">Rata-rata</p>
+                                                <p className="font-semibold">{avgPoints} pts</p>
+                                            </div>
+                                        </div>
+                                        {chapter.leader && (
+                                            <p className="text-xs text-gray-600">
+                                                <i className="fas fa-crown text-yellow-500 mr-1"></i>
+                                                Leader: {allMembersKPI.find(m => m.id === chapter.leader)?.name}
+                                            </p>
+                                        )}
+                                    </Card>
+                                );
+                            })}
+                        </div>
                     </div>
 
                     {/* Member Directory */}
@@ -1601,8 +1935,8 @@
                                         <tr>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Member</th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bisnis</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kontak</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chapter</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Level</th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Week {weekInfo.weekNumber}</th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
                                         </tr>
@@ -1611,8 +1945,8 @@
                                         {allMembersKPI.map(member => {
                                             const [showMemberProfile, setShowMemberProfile] = React.useState(false);
                                             return (
-                                                <>
-                                                    <tr key={member.id} className="hover:bg-gray-50">
+                                                <React.Fragment key={member.id}>
+                                                    <tr className="hover:bg-gray-50">
                                                         <td className="px-6 py-4 whitespace-nowrap">
                                                             <div className="flex items-center">
                                                                 <img 
@@ -1631,15 +1965,12 @@
                                                             <p className="text-sm text-gray-900">{member.businessName}</p>
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap">
-                                                            <p className="text-sm text-gray-600">{member.phone}</p>
-                                                            <p className="text-xs text-gray-500">{member.email}</p>
+                                                            <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                                                {member.chapter}
+                                                            </span>
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap">
-                                                            <span className={`px-2 py-1 rounded-full text-xs ${
-                                                                member.isApproved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                                                            }`}>
-                                                                {member.isApproved ? 'Active' : 'Pending'}
-                                                            </span>
+                                                            <p className="text-sm">Level {member.level} - {member.position}</p>
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap">
                                                             <div className="flex items-center">
@@ -1658,7 +1989,7 @@
                                                         isOpen={showMemberProfile}
                                                         onClose={() => setShowMemberProfile(false)}
                                                     />
-                                                </>
+                                                </React.Fragment>
                                             );
                                         })}
                                     </tbody>
@@ -1674,21 +2005,26 @@
         const LeaderboardPage = ({ state }) => {
             const [searchTerm, setSearchTerm] = React.useState('');
             const [filterBy, setFilterBy] = React.useState('all'); // all, champion, member
+            const [chapterFilter, setChapterFilter] = React.useState('all');
             const allMembersKPI = state.getAllMembersKPI();
             const weekInfo = getWeekRange();
+            const chapters = state.getChapters();
 
-            // Filter members based on search and badge
+            // Filter members based on search, badge, and chapter
             const filteredMembers = allMembersKPI.filter(member => {
                 // Search filter
                 const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                      member.businessName.toLowerCase().includes(searchTerm.toLowerCase());
                 
                 // Badge filter
-                if (filterBy === 'all') return matchesSearch;
-                if (filterBy === 'champion') return matchesSearch && member.badge === 'Champion';
-                if (filterBy === 'member') return matchesSearch && member.badge === 'Member';
+                let matchesBadge = true;
+                if (filterBy === 'champion') matchesBadge = member.badge === 'Champion';
+                if (filterBy === 'member') matchesBadge = member.badge === 'Member';
                 
-                return matchesSearch;
+                // Chapter filter
+                const matchesChapter = chapterFilter === 'all' || member.chapter === chapterFilter;
+                
+                return matchesSearch && matchesBadge && matchesChapter;
             });
 
             return (
@@ -1746,6 +2082,22 @@
                                     <i className="fas fa-user mr-1"></i>Member
                                 </button>
                             </div>
+
+                            {/* Chapter Filter */}
+                            <div className="md:min-w-[200px]">
+                                <select
+                                    value={chapterFilter}
+                                    onChange={(e) => setChapterFilter(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+                                >
+                                    <option value="all">Semua Chapter</option>
+                                    {chapters.map(chapter => (
+                                        <option key={chapter.id} value={chapter.name}>
+                                            {chapter.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                         
                         {/* Result Count */}
@@ -1770,7 +2122,7 @@
                                     <i className="fas fa-search text-4xl text-gray-300 mb-3"></i>
                                     <p className="text-gray-500">Tidak ada member yang ditemukan</p>
                                     <button 
-                                        onClick={() => {setSearchTerm(''); setFilterBy('all');}}
+                                        onClick={() => {setSearchTerm(''); setFilterBy('all'); setChapterFilter('all');}}
                                         className="mt-3 text-blue-600 hover:underline"
                                     >
                                         Reset filter
@@ -1786,6 +2138,9 @@
         // ==================== PROFILE PAGE ====================
         const ProfilePage = ({ currentUser }) => {
             const [avatar, setAvatar] = React.useState(currentUser?.avatar);
+            const downline = AppState.getDownline(currentUser.id, 'direct');
+            const totalDownline = AppState.getDownline(currentUser.id, 'all').length;
+            const upline = AppState.getUpline(currentUser.id);
 
             const handleAvatarUpdate = (newAvatar) => {
                 setAvatar(newAvatar);
@@ -1811,11 +2166,64 @@
                                     {currentUser?.badge}
                                 </p>
                                 <p className="text-gray-600 mt-2">{currentUser?.businessName}</p>
+                                <div className="flex items-center mt-2 space-x-4">
+                                    <span className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                                        <i className="fas fa-map-marker-alt mr-1"></i>{currentUser?.chapter}
+                                    </span>
+                                    <span className="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full">
+                                        <i className="fas fa-code mr-1"></i>{currentUser?.referralCode}
+                                    </span>
+                                </div>
                             </div>
                             <div className="mt-4 md:mt-0">
                                 <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium">
                                     <i className="fas fa-check-circle mr-2"></i>Verified Member
                                 </span>
+                            </div>
+                        </div>
+                    </Card>
+
+                    {/* Network Info */}
+                    <Card className="mb-6">
+                        <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                            <i className="fas fa-sitemap mr-2 text-blue-600"></i>
+                            Jaringan Saya
+                        </h3>
+                        <div className="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <p className="text-sm text-gray-600 mb-2">Atasan:</p>
+                                {upline.length > 0 ? (
+                                    upline.map(parent => (
+                                        <div key={parent.id} className="flex items-center p-2 bg-gray-50 rounded-lg mb-2">
+                                            <img src={parent.avatar} className="w-8 h-8 rounded-full mr-2" />
+                                            <div>
+                                                <p className="font-medium">{parent.name}</p>
+                                                <p className="text-xs text-gray-500">{parent.position} - {parent.chapter}</p>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-gray-500">Tidak ada atasan (Top Level)</p>
+                                )}
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-600 mb-2">Bawahan Langsung ({downline.length}):</p>
+                                {downline.length > 0 ? (
+                                    downline.map(child => (
+                                        <div key={child.id} className="flex items-center p-2 bg-gray-50 rounded-lg mb-2">
+                                            <img src={child.avatar} className="w-8 h-8 rounded-full mr-2" />
+                                            <div>
+                                                <p className="font-medium">{child.name}</p>
+                                                <p className="text-xs text-gray-500">Level {child.level}</p>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-gray-500">Belum memiliki bawahan</p>
+                                )}
+                                {totalDownline > downline.length && (
+                                    <p className="text-xs text-gray-500 mt-2">Total dalam jaringan: {totalDownline} orang</p>
+                                )}
                             </div>
                         </div>
                     </Card>
