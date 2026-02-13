@@ -77,6 +77,32 @@
         .kpi-button:active {
             transform: scale(0.95);
         }
+        .event-card {
+            transition: all 0.3s;
+        }
+        .event-card:hover {
+            transform: translateY(-2px);
+        }
+        .notification-badge {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        .event-method-online {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        }
+        .event-method-offline {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
     </style>
 </head>
 <body>
@@ -84,7 +110,7 @@
 
     <script type="text/babel">
         // -------------------------------------------------------------------
-        // CHAPTER KPI TRACKER - WITH PLUS/MINUS BUTTONS
+        // CHAPTER KPI TRACKER - WITH EVENTS & NOTIFICATIONS
         // -------------------------------------------------------------------
         
         // === CLEAR ALL OLD DATA - FRESH START ===
@@ -526,6 +552,68 @@
 
         localStorage.setItem('chapter_kpi', JSON.stringify(kpiData));
 
+        // === INIT EVENT DATA ===
+        const initialEvents = [
+            {
+                id: 1,
+                title: 'Weekly Chapter Meeting',
+                date: '2026-02-20',
+                time: '19:00',
+                speaker: 'Rizky Fadillah',
+                method: 'online',
+                link: 'https://zoom.us/j/123456789',
+                description: 'Meeting mingguan chapter Jakarta 1',
+                createdBy: 1,
+                createdAt: '2026-02-13',
+                attendees: [2, 3, 6],
+                chapter: 'Jakarta 1'
+            },
+            {
+                id: 2,
+                title: 'BNI Networking Night',
+                date: '2026-02-25',
+                time: '18:30',
+                speaker: 'Dimas Prayoga',
+                method: 'offline',
+                location: 'Hotel Indonesia Kempinski',
+                address: 'Jl. M.H. Thamrin No.1, Jakarta Pusat',
+                mapLink: 'https://maps.app.goo.gl/xyz',
+                description: 'Networking session antar member BNI',
+                createdBy: 1,
+                createdAt: '2026-02-13',
+                attendees: [2, 4, 5, 8],
+                chapter: 'All Chapters'
+            }
+        ];
+
+        localStorage.setItem('chapter_events', JSON.stringify(initialEvents));
+
+        // === INIT NOTIFICATIONS ===
+        const initialNotifications = [
+            {
+                id: 1,
+                userId: null, // null berarti untuk semua user
+                type: 'event',
+                eventId: 1,
+                title: 'Event Baru: Weekly Chapter Meeting',
+                message: 'Jangan lupa hadiri meeting mingguan besok jam 19:00',
+                isRead: false,
+                createdAt: '2026-02-13'
+            },
+            {
+                id: 2,
+                userId: null,
+                type: 'event',
+                eventId: 2,
+                title: 'Event Baru: BNI Networking Night',
+                message: 'Networking Night akan diadakan pada 25 Februari 2026',
+                isRead: false,
+                createdAt: '2026-02-13'
+            }
+        ];
+
+        localStorage.setItem('chapter_notifications', JSON.stringify(initialNotifications));
+
         // ============= GLOBAL STATE =============
         const AppState = {
             currentUser: null,
@@ -879,6 +967,136 @@
             getMembersByChapter: function(chapterName) {
                 const members = this.getAllMembers();
                 return members.filter(m => m.chapter === chapterName);
+            },
+
+            // ============= EVENT FUNCTIONS =============
+            getEvents: function() {
+                return JSON.parse(localStorage.getItem('chapter_events')) || [];
+            },
+
+            getEventById: function(eventId) {
+                const events = this.getEvents();
+                return events.find(e => e.id === eventId);
+            },
+
+            createEvent: function(eventData) {
+                const events = this.getEvents();
+                const newEvent = {
+                    id: events.length + 1,
+                    ...eventData,
+                    createdBy: this.currentUser?.id,
+                    createdAt: new Date().toISOString().split('T')[0],
+                    attendees: []
+                };
+                events.push(newEvent);
+                localStorage.setItem('chapter_events', JSON.stringify(events));
+
+                // Create notifications for all users
+                this.createEventNotification(newEvent);
+
+                return { success: true, event: newEvent };
+            },
+
+            updateEvent: function(eventId, eventData) {
+                const events = this.getEvents();
+                const index = events.findIndex(e => e.id === eventId);
+                if (index > -1) {
+                    events[index] = { ...events[index], ...eventData };
+                    localStorage.setItem('chapter_events', JSON.stringify(events));
+                    return { success: true, event: events[index] };
+                }
+                return { success: false, message: 'Event tidak ditemukan' };
+            },
+
+            deleteEvent: function(eventId) {
+                const events = this.getEvents();
+                const filtered = events.filter(e => e.id !== eventId);
+                localStorage.setItem('chapter_events', JSON.stringify(filtered));
+
+                // Delete related notifications
+                const notifications = this.getNotifications();
+                const filteredNotifications = notifications.filter(n => n.eventId !== eventId);
+                localStorage.setItem('chapter_notifications', JSON.stringify(filteredNotifications));
+
+                return { success: true };
+            },
+
+            joinEvent: function(eventId, userId) {
+                const events = this.getEvents();
+                const index = events.findIndex(e => e.id === eventId);
+                if (index > -1) {
+                    if (!events[index].attendees.includes(userId)) {
+                        events[index].attendees.push(userId);
+                        localStorage.setItem('chapter_events', JSON.stringify(events));
+                    }
+                    return { success: true };
+                }
+                return { success: false, message: 'Event tidak ditemukan' };
+            },
+
+            leaveEvent: function(eventId, userId) {
+                const events = this.getEvents();
+                const index = events.findIndex(e => e.id === eventId);
+                if (index > -1) {
+                    events[index].attendees = events[index].attendees.filter(id => id !== userId);
+                    localStorage.setItem('chapter_events', JSON.stringify(events));
+                    return { success: true };
+                }
+                return { success: false, message: 'Event tidak ditemukan' };
+            },
+
+            // ============= NOTIFICATION FUNCTIONS =============
+            getNotifications: function() {
+                return JSON.parse(localStorage.getItem('chapter_notifications')) || [];
+            },
+
+            createEventNotification: function(event) {
+                const notifications = this.getNotifications();
+                const newNotification = {
+                    id: notifications.length + 1,
+                    userId: null, // untuk semua user
+                    type: 'event',
+                    eventId: event.id,
+                    title: `Event Baru: ${event.title}`,
+                    message: `${event.title} akan diadakan pada ${event.date} pukul ${event.time}`,
+                    isRead: false,
+                    createdAt: new Date().toISOString().split('T')[0]
+                };
+                notifications.push(newNotification);
+                localStorage.setItem('chapter_notifications', JSON.stringify(notifications));
+            },
+
+            getUserNotifications: function(userId) {
+                const notifications = this.getNotifications();
+                // Return notifications for all users (userId = null) and specific user notifications
+                return notifications.filter(n => n.userId === null || n.userId === userId)
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            },
+
+            markNotificationAsRead: function(notificationId) {
+                const notifications = this.getNotifications();
+                const index = notifications.findIndex(n => n.id === notificationId);
+                if (index > -1) {
+                    notifications[index].isRead = true;
+                    localStorage.setItem('chapter_notifications', JSON.stringify(notifications));
+                    return true;
+                }
+                return false;
+            },
+
+            markAllNotificationsAsRead: function(userId) {
+                const notifications = this.getNotifications();
+                notifications.forEach(n => {
+                    if (n.userId === null || n.userId === userId) {
+                        n.isRead = true;
+                    }
+                });
+                localStorage.setItem('chapter_notifications', JSON.stringify(notifications));
+            },
+
+            getUnreadNotificationCount: function(userId) {
+                const notifications = this.getUserNotifications(userId);
+                return notifications.filter(n => !n.isRead).length;
             }
         };
 
@@ -960,6 +1178,557 @@
                         className="file-input"
                     />
                 </div>
+            );
+        };
+
+        // ==================== NOTIFICATION COMPONENT ====================
+        const NotificationBell = ({ currentUser }) => {
+            const [showDropdown, setShowDropdown] = React.useState(false);
+            const [notifications, setNotifications] = React.useState([]);
+            const [unreadCount, setUnreadCount] = React.useState(0);
+
+            React.useEffect(() => {
+                loadNotifications();
+                // Refresh notifications every 30 seconds
+                const interval = setInterval(loadNotifications, 30000);
+                return () => clearInterval(interval);
+            }, []);
+
+            const loadNotifications = () => {
+                const userNotifications = AppState.getUserNotifications(currentUser?.id);
+                setNotifications(userNotifications);
+                setUnreadCount(userNotifications.filter(n => !n.isRead).length);
+            };
+
+            const handleMarkAsRead = (notificationId) => {
+                AppState.markNotificationAsRead(notificationId);
+                loadNotifications();
+            };
+
+            const handleMarkAllAsRead = () => {
+                AppState.markAllNotificationsAsRead(currentUser?.id);
+                loadNotifications();
+            };
+
+            const handleNotificationClick = (notification) => {
+                handleMarkAsRead(notification.id);
+                if (notification.type === 'event' && notification.eventId) {
+                    window.location.hash = '#/events';
+                }
+                setShowDropdown(false);
+            };
+
+            return (
+                <div className="relative">
+                    <button
+                        onClick={() => setShowDropdown(!showDropdown)}
+                        className="relative p-2 text-gray-600 hover:text-gray-900 transition"
+                    >
+                        <i className="fas fa-bell text-xl"></i>
+                        {unreadCount > 0 && (
+                            <span className="notification-badge absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                                {unreadCount}
+                            </span>
+                        )}
+                    </button>
+
+                    {showDropdown && (
+                        <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-50 border border-gray-200">
+                            <div className="p-3 border-b border-gray-200 flex justify-between items-center">
+                                <h3 className="font-semibold text-gray-900">Notifikasi</h3>
+                                {unreadCount > 0 && (
+                                    <button
+                                        onClick={handleMarkAllAsRead}
+                                        className="text-xs text-blue-600 hover:text-blue-800"
+                                    >
+                                        Tandai semua dibaca
+                                    </button>
+                                )}
+                            </div>
+                            <div className="max-h-96 overflow-y-auto">
+                                {notifications.length > 0 ? (
+                                    notifications.map(notification => (
+                                        <div
+                                            key={notification.id}
+                                            onClick={() => handleNotificationClick(notification)}
+                                            className={`p-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition ${
+                                                !notification.isRead ? 'bg-blue-50' : ''
+                                            }`}
+                                        >
+                                            <div className="flex items-start">
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
+                                                    notification.type === 'event' 
+                                                        ? 'bg-purple-100 text-purple-600'
+                                                        : 'bg-blue-100 text-blue-600'
+                                                }`}>
+                                                    <i className={`fas ${
+                                                        notification.type === 'event' ? 'fa-calendar' : 'fa-bell'
+                                                    }`}></i>
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="text-sm font-medium text-gray-900">
+                                                        {notification.title}
+                                                    </p>
+                                                    <p className="text-xs text-gray-600 mt-1">
+                                                        {notification.message}
+                                                    </p>
+                                                    <p className="text-xs text-gray-400 mt-1">
+                                                        {notification.createdAt}
+                                                    </p>
+                                                </div>
+                                                {!notification.isRead && (
+                                                    <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="p-6 text-center text-gray-500">
+                                        <i className="fas fa-bell-slash text-3xl mb-2 text-gray-300"></i>
+                                        <p className="text-sm">Tidak ada notifikasi</p>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="p-2 border-t border-gray-200 text-center">
+                                <a href="#/notifications" className="text-xs text-blue-600 hover:text-blue-800">
+                                    Lihat semua notifikasi
+                                </a>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // ==================== CREATE EVENT MODAL ====================
+        const CreateEventModal = ({ isOpen, onClose, onCreate }) => {
+            const [formData, setFormData] = React.useState({
+                title: '',
+                date: '',
+                time: '',
+                speaker: '',
+                method: 'online',
+                link: '',
+                location: '',
+                address: '',
+                mapLink: '',
+                description: '',
+                chapter: 'All Chapters'
+            });
+            const [error, setError] = React.useState('');
+            const [loading, setLoading] = React.useState(false);
+            const chapters = AppState.getChapters();
+
+            if (!isOpen) return null;
+
+            const handleChange = (e) => {
+                const { name, value } = e.target;
+                setFormData(prev => ({ ...prev, [name]: value }));
+                setError('');
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                setError('');
+                setLoading(true);
+
+                // Validasi
+                if (!formData.title || !formData.date || !formData.time) {
+                    setError('Judul, tanggal, dan waktu harus diisi');
+                    setLoading(false);
+                    return;
+                }
+
+                if (formData.method === 'online' && !formData.link) {
+                    setError('Link Zoom harus diisi untuk event online');
+                    setLoading(false);
+                    return;
+                }
+
+                if (formData.method === 'offline' && (!formData.location || !formData.address)) {
+                    setError('Lokasi dan alamat harus diisi untuk event offline');
+                    setLoading(false);
+                    return;
+                }
+
+                const result = onCreate(formData);
+                if (result.success) {
+                    setLoading(false);
+                    onClose();
+                } else {
+                    setError(result.message || 'Gagal membuat event');
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" onClick={onClose}>
+                    <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto edit-profile-modal" onClick={e => e.stopPropagation()}>
+                        {/* Header */}
+                        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4 rounded-t-2xl flex justify-between items-center sticky top-0">
+                            <div className="flex items-center text-white">
+                                <i className="fas fa-calendar-plus mr-3 text-xl"></i>
+                                <h2 className="text-xl font-bold">Buat Event Baru</h2>
+                            </div>
+                            <button onClick={onClose} className="text-white hover:text-gray-200 transition">
+                                <i className="fas fa-times text-2xl"></i>
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                            {error && (
+                                <div className="bg-red-50 text-red-700 p-3 rounded-lg text-sm border border-red-200">
+                                    <i className="fas fa-exclamation-circle mr-2"></i>{error}
+                                </div>
+                            )}
+
+                            {/* Judul Event */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Event *</label>
+                                <input
+                                    type="text"
+                                    name="title"
+                                    value={formData.title}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                    placeholder="Contoh: Weekly Chapter Meeting"
+                                    required
+                                />
+                            </div>
+
+                            {/* Tanggal dan Waktu */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Tanggal *</label>
+                                    <input
+                                        type="date"
+                                        name="date"
+                                        value={formData.date}
+                                        onChange={handleChange}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Waktu *</label>
+                                    <input
+                                        type="time"
+                                        name="time"
+                                        value={formData.time}
+                                        onChange={handleChange}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Speaker dan Chapter */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Speaker (Opsional)</label>
+                                    <input
+                                        type="text"
+                                        name="speaker"
+                                        value={formData.speaker}
+                                        onChange={handleChange}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                        placeholder="Nama pembicara"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Chapter</label>
+                                    <select
+                                        name="chapter"
+                                        value={formData.chapter}
+                                        onChange={handleChange}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                    >
+                                        <option value="All Chapters">Semua Chapter</option>
+                                        {chapters.map(chapter => (
+                                            <option key={chapter.id} value={chapter.name}>
+                                                {chapter.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Metode Event */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Metode *</label>
+                                <div className="flex space-x-4">
+                                    <label className="flex items-center">
+                                        <input
+                                            type="radio"
+                                            name="method"
+                                            value="online"
+                                            checked={formData.method === 'online'}
+                                            onChange={handleChange}
+                                            className="mr-2"
+                                        />
+                                        <span>Online</span>
+                                    </label>
+                                    <label className="flex items-center">
+                                        <input
+                                            type="radio"
+                                            name="method"
+                                            value="offline"
+                                            checked={formData.method === 'offline'}
+                                            onChange={handleChange}
+                                            className="mr-2"
+                                        />
+                                        <span>Offline</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            {/* Fields berdasarkan metode */}
+                            {formData.method === 'online' && (
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Link Zoom/Meeting *</label>
+                                    <input
+                                        type="url"
+                                        name="link"
+                                        value={formData.link}
+                                        onChange={handleChange}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                        placeholder="https://zoom.us/j/xxx"
+                                        required={formData.method === 'online'}
+                                    />
+                                </div>
+                            )}
+
+                            {formData.method === 'offline' && (
+                                <>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Nama Tempat *</label>
+                                        <input
+                                            type="text"
+                                            name="location"
+                                            value={formData.location}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                            placeholder="Contoh: Hotel Indonesia Kempinski"
+                                            required={formData.method === 'offline'}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Alamat Lengkap *</label>
+                                        <textarea
+                                            name="address"
+                                            value={formData.address}
+                                            onChange={handleChange}
+                                            rows="2"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                            placeholder="Jl. M.H. Thamrin No.1, Jakarta Pusat"
+                                            required={formData.method === 'offline'}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Link Google Maps</label>
+                                        <input
+                                            type="url"
+                                            name="mapLink"
+                                            value={formData.mapLink}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                            placeholder="https://maps.app.goo.gl/xxx"
+                                        />
+                                    </div>
+                                </>
+                            )}
+
+                            {/* Deskripsi */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Deskripsi Event</label>
+                                <textarea
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={handleChange}
+                                    rows="3"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                    placeholder="Informasi tambahan tentang event..."
+                                />
+                            </div>
+
+                            {/* Buttons */}
+                            <div className="flex space-x-4 pt-4">
+                                <Button
+                                    type="submit"
+                                    variant="primary"
+                                    className="flex-1 py-3 bg-purple-600 hover:bg-purple-700"
+                                    disabled={loading}
+                                >
+                                    {loading ? (
+                                        <><i className="fas fa-spinner fa-spin mr-2"></i>Membuat...</>
+                                    ) : (
+                                        <><i className="fas fa-calendar-plus mr-2"></i>Buat Event</>
+                                    )}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="secondary"
+                                    onClick={onClose}
+                                    className="px-6"
+                                >
+                                    Batal
+                                </Button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            );
+        };
+
+        // ==================== EVENT CARD COMPONENT ====================
+        const EventCard = ({ event, currentUser, onJoin, onLeave, onDelete }) => {
+            const [isJoined, setIsJoined] = React.useState(event.attendees?.includes(currentUser?.id));
+            const [showDetails, setShowDetails] = React.useState(false);
+
+            const handleJoin = () => {
+                onJoin(event.id);
+                setIsJoined(true);
+            };
+
+            const handleLeave = () => {
+                onLeave(event.id);
+                setIsJoined(false);
+            };
+
+            const formatDate = (dateStr) => {
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('id-ID', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+            };
+
+            return (
+                <Card className={`event-card overflow-hidden ${showDetails ? 'ring-2 ring-purple-400' : ''}`}>
+                    {/* Header dengan warna berdasarkan metode */}
+                    <div className={`-mx-5 -mt-5 px-5 py-3 mb-4 ${
+                        event.method === 'online' ? 'event-method-online' : 'event-method-offline'
+                    } text-white`}>
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center">
+                                <i className={`fas ${
+                                    event.method === 'online' ? 'fa-video' : 'fa-building'
+                                } mr-2`}></i>
+                                <span className="text-sm font-medium uppercase">
+                                    {event.method === 'online' ? 'Online' : 'Offline'}
+                                </span>
+                            </div>
+                            {currentUser?.role === 'super_admin' && (
+                                <button
+                                    onClick={() => onDelete(event.id)}
+                                    className="text-white hover:text-red-200 transition"
+                                >
+                                    <i className="fas fa-trash"></i>
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="space-y-3">
+                        <div>
+                            <h3 className="text-lg font-bold text-gray-900">{event.title}</h3>
+                            {event.speaker && (
+                                <p className="text-sm text-gray-600">
+                                    <i className="fas fa-microphone-alt mr-2 text-purple-500"></i>
+                                    Speaker: {event.speaker}
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                            <div className="flex items-center text-gray-600">
+                                <i className="fas fa-calendar mr-2 text-blue-500 w-4"></i>
+                                {formatDate(event.date)}
+                            </div>
+                            <div className="flex items-center text-gray-600">
+                                <i className="fas fa-clock mr-2 text-green-500 w-4"></i>
+                                {event.time} WIB
+                            </div>
+                        </div>
+
+                        {event.method === 'online' && event.link && (
+                            <div className="bg-blue-50 p-3 rounded-lg">
+                                <p className="text-xs text-gray-600 mb-1">Link Meeting:</p>
+                                <a 
+                                    href={event.link} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:underline text-sm break-all"
+                                >
+                                    <i className="fas fa-video mr-2"></i>
+                                    {event.link}
+                                </a>
+                            </div>
+                        )}
+
+                        {event.method === 'offline' && event.location && (
+                            <div className="bg-green-50 p-3 rounded-lg">
+                                <p className="font-medium text-gray-900">{event.location}</p>
+                                <p className="text-xs text-gray-600 mt-1">{event.address}</p>
+                                {event.mapLink && (
+                                    <a 
+                                        href={event.mapLink} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="text-green-600 hover:underline text-xs mt-2 inline-block"
+                                    >
+                                        <i className="fas fa-map-marker-alt mr-1"></i>
+                                        Buka di Google Maps
+                                    </a>
+                                )}
+                            </div>
+                        )}
+
+                        {event.description && (
+                            <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                                {event.description}
+                            </p>
+                        )}
+
+                        {/* Attendees */}
+                        <div className="flex items-center justify-between pt-2 border-t">
+                            <div className="flex items-center">
+                                <div className="flex -space-x-2">
+                                    {event.attendees?.slice(0, 3).map((id, idx) => {
+                                        const member = AppState.getMemberById(id);
+                                        return member ? (
+                                            <img
+                                                key={id}
+                                                src={member.avatar}
+                                                className="w-6 h-6 rounded-full border-2 border-white"
+                                                title={member.name}
+                                            />
+                                        ) : null;
+                                    })}
+                                </div>
+                                <span className="text-xs text-gray-500 ml-2">
+                                    {event.attendees?.length || 0} peserta
+                                </span>
+                            </div>
+                            
+                            {currentUser?.role !== 'super_admin' && (
+                                <button
+                                    onClick={isJoined ? handleLeave : handleJoin}
+                                    className={`px-4 py-1 rounded-full text-sm font-medium transition ${
+                                        isJoined 
+                                            ? 'bg-red-100 text-red-600 hover:bg-red-200' 
+                                            : 'bg-green-100 text-green-600 hover:bg-green-200'
+                                    }`}
+                                >
+                                    {isJoined ? 'Batal' : 'Ikut'}
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </Card>
             );
         };
 
@@ -2028,11 +2797,23 @@
             const kpiSummary = state.getMemberKPISummary(currentUser?.id);
             const weekInfo = getWeekRange();
             const allMembersKPI = state.getAllMembersKPI();
+            const events = state.getEvents();
             
             const memberRank = allMembersKPI.findIndex(m => m.id === currentUser.id) + 1;
             const downlineCount = state.getDownline(currentUser.id, 'direct').length;
             const totalDownline = state.getDownline(currentUser.id, 'all').length;
             
+            // Filter upcoming events (next 7 days)
+            const today = new Date();
+            const nextWeek = new Date();
+            nextWeek.setDate(today.getDate() + 7);
+            
+            const upcomingEvents = events.filter(event => {
+                const eventDate = new Date(event.date);
+                return eventDate >= today && eventDate <= nextWeek && 
+                       (event.chapter === 'All Chapters' || event.chapter === currentUser.chapter);
+            }).sort((a, b) => new Date(a.date) - new Date(b.date));
+
             const handleUpdateKPI = (kpiId, value, type) => {
                 state.updateKPI(currentUser.id, kpiId, value, type);
                 setRefresh(prev => prev + 1);
@@ -2049,6 +2830,16 @@
                     setAvatar(result.user.avatar);
                 }
                 return result;
+            };
+
+            const handleJoinEvent = (eventId) => {
+                state.joinEvent(eventId, currentUser.id);
+                setRefresh(prev => prev + 1);
+            };
+
+            const handleLeaveEvent = (eventId) => {
+                state.leaveEvent(eventId, currentUser.id);
+                setRefresh(prev => prev + 1);
             };
 
             const weekRange = `${weekInfo.monday.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} - ${weekInfo.sunday.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`;
@@ -2166,7 +2957,28 @@
                         </Card>
                     </div>
 
-                    {/* Current Week KPI - DENGAN BUTTON +/- */}
+                    {/* Upcoming Events */}
+                    {upcomingEvents.length > 0 && (
+                        <div className="mb-6">
+                            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                                <i className="fas fa-calendar-alt mr-2 text-purple-600"></i>
+                                Event Mendatang
+                            </h2>
+                            <div className="space-y-4">
+                                {upcomingEvents.map(event => (
+                                    <EventCard
+                                        key={event.id}
+                                        event={event}
+                                        currentUser={currentUser}
+                                        onJoin={handleJoinEvent}
+                                        onLeave={handleLeaveEvent}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Current Week KPI */}
                     <div className="mb-6">
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-lg font-bold text-gray-900">
@@ -2293,11 +3105,13 @@
             const [refresh, setRefresh] = React.useState(0);
             const [avatar, setAvatar] = React.useState(currentUser?.avatar);
             const [showEditProfile, setShowEditProfile] = React.useState(false);
+            const [showCreateEvent, setShowCreateEvent] = React.useState(false);
             const allMembers = state.getAllMembers();
             const chapterSummary = state.getChapterSummary();
             const allMembersKPI = state.getAllMembersKPI();
             const weekInfo = getWeekRange();
             const chapters = state.getChapters();
+            const events = state.getEvents();
 
             const handleAvatarUpdate = (newAvatar) => {
                 setAvatar(newAvatar);
@@ -2310,6 +3124,29 @@
                     setAvatar(result.user.avatar);
                 }
                 return result;
+            };
+
+            const handleCreateEvent = (eventData) => {
+                const result = state.createEvent(eventData);
+                setRefresh(prev => prev + 1);
+                return result;
+            };
+
+            const handleDeleteEvent = (eventId) => {
+                if (confirm('Yakin ingin menghapus event ini?')) {
+                    state.deleteEvent(eventId);
+                    setRefresh(prev => prev + 1);
+                }
+            };
+
+            const handleJoinEvent = (eventId) => {
+                state.joinEvent(eventId, currentUser.id);
+                setRefresh(prev => prev + 1);
+            };
+
+            const handleLeaveEvent = (eventId) => {
+                state.leaveEvent(eventId, currentUser.id);
+                setRefresh(prev => prev + 1);
             };
 
             const weekRange = `${weekInfo.monday.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} - ${weekInfo.sunday.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`;
@@ -2329,6 +3166,14 @@
                             </div>
                         </div>
                         <div className="flex items-center space-x-3">
+                            <Button 
+                                variant="primary" 
+                                onClick={() => setShowCreateEvent(true)}
+                                className="flex items-center bg-purple-600 hover:bg-purple-700"
+                            >
+                                <i className="fas fa-calendar-plus mr-2"></i>
+                                Buat Event
+                            </Button>
                             <Button 
                                 variant="outline" 
                                 onClick={() => setShowEditProfile(true)}
@@ -2362,10 +3207,44 @@
                             <p className="text-xs text-gray-500 mt-1">{chapterSummary.membersCompleteKPI}/{chapterSummary.membersWithKPI} member</p>
                         </Card>
                         <Card className="bg-gradient-to-br from-orange-50 to-red-50">
-                            <p className="text-xs text-gray-600">Total Chapter</p>
-                            <p className="text-2xl font-bold text-orange-600">{chapters.length}</p>
-                            <p className="text-xs text-gray-500 mt-1">Aktif semua</p>
+                            <p className="text-xs text-gray-600">Total Event</p>
+                            <p className="text-2xl font-bold text-orange-600">{events.length}</p>
+                            <p className="text-xs text-gray-500 mt-1">Aktif: {events.filter(e => new Date(e.date) >= new Date()).length}</p>
                         </Card>
+                    </div>
+
+                    {/* Events Section */}
+                    <div className="mb-8">
+                        <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                            <i className="fas fa-calendar-alt mr-2 text-purple-600"></i>
+                            Daftar Event
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {events.length > 0 ? (
+                                events.sort((a, b) => new Date(a.date) - new Date(b.date)).map(event => (
+                                    <EventCard
+                                        key={event.id}
+                                        event={event}
+                                        currentUser={currentUser}
+                                        onJoin={handleJoinEvent}
+                                        onLeave={handleLeaveEvent}
+                                        onDelete={handleDeleteEvent}
+                                    />
+                                ))
+                            ) : (
+                                <div className="col-span-2 text-center py-12 bg-white rounded-xl">
+                                    <i className="fas fa-calendar-times text-4xl text-gray-300 mb-3"></i>
+                                    <p className="text-gray-500">Belum ada event</p>
+                                    <button
+                                        onClick={() => setShowCreateEvent(true)}
+                                        className="mt-3 text-purple-600 hover:text-purple-800 font-medium"
+                                    >
+                                        <i className="fas fa-plus mr-1"></i>
+                                        Buat Event Pertama
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Chapter Overview */}
@@ -2488,6 +3367,13 @@
                         </div>
                     </div>
 
+                    {/* Create Event Modal */}
+                    <CreateEventModal
+                        isOpen={showCreateEvent}
+                        onClose={() => setShowCreateEvent(false)}
+                        onCreate={handleCreateEvent}
+                    />
+
                     {/* Edit Profile Modal */}
                     <EditProfileModal
                         isOpen={showEditProfile}
@@ -2495,6 +3381,189 @@
                         currentUser={{...currentUser, avatar}}
                         onUpdate={handleProfileUpdate}
                     />
+                </div>
+            );
+        };
+
+        // ==================== EVENTS PAGE ====================
+        const EventsPage = ({ currentUser, state }) => {
+            const [refresh, setRefresh] = React.useState(0);
+            const [filter, setFilter] = React.useState('upcoming'); // upcoming, past, all
+            const events = state.getEvents();
+            
+            const today = new Date();
+            
+            const filteredEvents = events.filter(event => {
+                const eventDate = new Date(event.date);
+                if (filter === 'upcoming') return eventDate >= today;
+                if (filter === 'past') return eventDate < today;
+                return true;
+            }).sort((a, b) => {
+                if (filter === 'past') {
+                    return new Date(b.date) - new Date(a.date); // descending for past
+                }
+                return new Date(a.date) - new Date(b.date); // ascending for upcoming
+            });
+
+            const handleJoinEvent = (eventId) => {
+                state.joinEvent(eventId, currentUser.id);
+                setRefresh(prev => prev + 1);
+            };
+
+            const handleLeaveEvent = (eventId) => {
+                state.leaveEvent(eventId, currentUser.id);
+                setRefresh(prev => prev + 1);
+            };
+
+            return (
+                <div className="max-w-7xl mx-auto px-4 pb-24 pt-6">
+                    <h1 className="text-2xl font-bold text-gray-900 mb-2">Events</h1>
+                    <p className="text-sm text-gray-600 mb-6">Daftar event chapter</p>
+
+                    {/* Filter Buttons */}
+                    <div className="flex space-x-2 mb-6">
+                        <button
+                            onClick={() => setFilter('upcoming')}
+                            className={`px-4 py-2 rounded-lg font-medium transition ${
+                                filter === 'upcoming'
+                                    ? 'bg-purple-600 text-white'
+                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }`}
+                        >
+                            <i className="fas fa-calendar-day mr-2"></i>
+                            Mendatang
+                        </button>
+                        <button
+                            onClick={() => setFilter('past')}
+                            className={`px-4 py-2 rounded-lg font-medium transition ${
+                                filter === 'past'
+                                    ? 'bg-purple-600 text-white'
+                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }`}
+                        >
+                            <i className="fas fa-calendar-check mr-2"></i>
+                            Selesai
+                        </button>
+                        <button
+                            onClick={() => setFilter('all')}
+                            className={`px-4 py-2 rounded-lg font-medium transition ${
+                                filter === 'all'
+                                    ? 'bg-purple-600 text-white'
+                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }`}
+                        >
+                            <i className="fas fa-calendar-alt mr-2"></i>
+                            Semua
+                        </button>
+                    </div>
+
+                    {/* Events List */}
+                    <div className="space-y-4">
+                        {filteredEvents.length > 0 ? (
+                            filteredEvents.map(event => (
+                                <EventCard
+                                    key={event.id}
+                                    event={event}
+                                    currentUser={currentUser}
+                                    onJoin={handleJoinEvent}
+                                    onLeave={handleLeaveEvent}
+                                />
+                            ))
+                        ) : (
+                            <div className="text-center py-12 bg-white rounded-xl">
+                                <i className="fas fa-calendar-times text-4xl text-gray-300 mb-3"></i>
+                                <p className="text-gray-500">Tidak ada event</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // ==================== NOTIFICATIONS PAGE ====================
+        const NotificationsPage = ({ currentUser, state }) => {
+            const [refresh, setRefresh] = React.useState(0);
+            const notifications = state.getUserNotifications(currentUser.id);
+
+            const handleMarkAsRead = (notificationId) => {
+                state.markNotificationAsRead(notificationId);
+                setRefresh(prev => prev + 1);
+            };
+
+            const handleMarkAllAsRead = () => {
+                state.markAllNotificationsAsRead(currentUser.id);
+                setRefresh(prev => prev + 1);
+            };
+
+            const handleNotificationClick = (notification) => {
+                handleMarkAsRead(notification.id);
+                if (notification.type === 'event' && notification.eventId) {
+                    window.location.hash = '#/events';
+                }
+            };
+
+            return (
+                <div className="max-w-7xl mx-auto px-4 pb-24 pt-6">
+                    <div className="flex justify-between items-center mb-6">
+                        <h1 className="text-2xl font-bold text-gray-900">Notifikasi</h1>
+                        {notifications.some(n => !n.isRead) && (
+                            <button
+                                onClick={handleMarkAllAsRead}
+                                className="text-sm text-blue-600 hover:text-blue-800"
+                            >
+                                Tandai semua dibaca
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="space-y-3">
+                        {notifications.length > 0 ? (
+                            notifications.map(notification => (
+                                <div
+                                    key={notification.id}
+                                    onClick={() => handleNotificationClick(notification)}
+                                    className={`bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition cursor-pointer ${
+                                        !notification.isRead ? 'border-l-4 border-blue-500' : ''
+                                    }`}
+                                >
+                                    <div className="flex items-start">
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
+                                            notification.type === 'event' 
+                                                ? 'bg-purple-100 text-purple-600'
+                                                : 'bg-blue-100 text-blue-600'
+                                        }`}>
+                                            <i className={`fas ${
+                                                notification.type === 'event' ? 'fa-calendar' : 'fa-bell'
+                                            }`}></i>
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <p className="font-semibold text-gray-900">
+                                                        {notification.title}
+                                                    </p>
+                                                    <p className="text-sm text-gray-600 mt-1">
+                                                        {notification.message}
+                                                    </p>
+                                                </div>
+                                                {!notification.isRead && (
+                                                    <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                                                )}
+                                            </div>
+                                            <p className="text-xs text-gray-400 mt-2">
+                                                {notification.createdAt}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="text-center py-12 bg-white rounded-xl">
+                                <i className="fas fa-bell-slash text-4xl text-gray-300 mb-3"></i>
+                                <p className="text-gray-500">Tidak ada notifikasi</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             );
         };
@@ -2631,6 +3700,9 @@
             const downline = AppState.getDownline(currentUser.id, 'direct');
             const totalDownline = AppState.getDownline(currentUser.id, 'all').length;
             const upline = AppState.getUpline(currentUser.id);
+            const myEvents = AppState.getEvents().filter(event => 
+                event.attendees?.includes(currentUser.id)
+            );
 
             const handleAvatarUpdate = (newAvatar) => {
                 setAvatar(newAvatar);
@@ -2690,6 +3762,35 @@
                             </div>
                         </div>
                     </Card>
+
+                    {/* My Events */}
+                    {myEvents.length > 0 && (
+                        <Card className="mb-6">
+                            <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                                <i className="fas fa-calendar-check mr-2 text-purple-600"></i>
+                                Event yang Saya Ikuti ({myEvents.length})
+                            </h3>
+                            <div className="space-y-3">
+                                {myEvents.map(event => (
+                                    <div key={event.id} className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                                        <div>
+                                            <p className="font-medium text-gray-900">{event.title}</p>
+                                            <p className="text-xs text-gray-600">
+                                                {event.date} • {event.time}
+                                            </p>
+                                        </div>
+                                        <span className={`text-xs px-2 py-1 rounded-full ${
+                                            event.method === 'online' 
+                                                ? 'bg-blue-100 text-blue-800' 
+                                                : 'bg-green-100 text-green-800'
+                                        }`}>
+                                            {event.method === 'online' ? 'Online' : 'Offline'}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </Card>
+                    )}
 
                     {/* Network Info */}
                     <Card className="mb-6">
@@ -2817,6 +3918,7 @@
         const BottomNav = ({ active = 'home', role = 'member' }) => {
             const items = [
                 { id: 'home', icon: 'fas fa-home', label: 'Dashboard', href: '#/dashboard' },
+                { id: 'events', icon: 'fas fa-calendar', label: 'Events', href: '#/events' },
                 { id: 'leaderboard', icon: 'fas fa-trophy', label: 'Leaderboard', href: '#/leaderboard' },
                 { id: 'profile', icon: 'fas fa-user', label: 'Profile', href: '#/profile' }
             ];
@@ -2835,33 +3937,41 @@
         };
 
         // ==================== NAVIGATION HEADER ====================
-        const Navigation = ({ currentUser, onLogout }) => (
-            <nav className="bg-white shadow-sm sticky top-0 z-40 px-4 py-3">
-                <div className="flex justify-between items-center">
-                    <div className="flex items-center">
-                        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
-                            KPI Monitoring
-                        </h1>
-                        {currentUser?.role === 'super_admin' && (
-                            <span className="ml-3 bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
-                                <i className="fas fa-crown mr-1"></i>Super Admin
-                            </span>
-                        )}
-                        {currentUser?.role === 'member' && currentUser?.badge === 'Champion' && (
-                            <span className="ml-3 bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
-                                <i className="fas fa-crown mr-1"></i>Champion
-                            </span>
-                        )}
+        const Navigation = ({ currentUser, onLogout }) => {
+            const unreadCount = AppState.getUnreadNotificationCount(currentUser?.id);
+
+            return (
+                <nav className="bg-white shadow-sm sticky top-0 z-40 px-4 py-3">
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center">
+                            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+                                KPI Monitoring
+                            </h1>
+                            {currentUser?.role === 'super_admin' && (
+                                <span className="ml-3 bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
+                                    <i className="fas fa-crown mr-1"></i>Super Admin
+                                </span>
+                            )}
+                            {currentUser?.role === 'member' && currentUser?.badge === 'Champion' && (
+                                <span className="ml-3 bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
+                                    <i className="fas fa-crown mr-1"></i>Champion
+                                </span>
+                            )}
+                        </div>
+                        <div className="flex items-center space-x-4">
+                            <NotificationBell currentUser={currentUser} />
+                            <a href="#/events" className="text-gray-600 hover:text-gray-900">
+                                <i className="fas fa-calendar text-xl"></i>
+                            </a>
+                            <span className="text-sm text-gray-700 hidden sm:block">{currentUser?.name}</span>
+                            <button onClick={onLogout} className="text-gray-500 hover:text-gray-700">
+                                <i className="fas fa-sign-out-alt text-lg"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div className="flex items-center space-x-4">
-                        <span className="text-sm text-gray-700 hidden sm:block">{currentUser?.name}</span>
-                        <button onClick={onLogout} className="text-gray-500 hover:text-gray-700">
-                            <i className="fas fa-sign-out-alt text-lg"></i>
-                        </button>
-                    </div>
-                </div>
-            </nav>
-        );
+                </nav>
+            );
+        };
 
         // ==================== MAIN APP ====================
         const App = () => {
@@ -2920,13 +4030,17 @@
                 
                 if (currentUser.role === 'super_admin') {
                     if (path === '#/dashboard') { page = <SuperAdminDashboard currentUser={currentUser} state={AppState} />; activeNav = 'home'; }
+                    else if (path === '#/events') { page = <EventsPage currentUser={currentUser} state={AppState} />; activeNav = 'events'; }
                     else if (path === '#/leaderboard') { page = <LeaderboardPage state={AppState} />; activeNav = 'leaderboard'; }
                     else if (path === '#/profile') { page = <ProfilePage currentUser={currentUser} />; activeNav = 'profile'; }
+                    else if (path === '#/notifications') { page = <NotificationsPage currentUser={currentUser} state={AppState} />; activeNav = 'home'; }
                     else { page = <SuperAdminDashboard currentUser={currentUser} state={AppState} />; activeNav = 'home'; }
                 } else {
                     if (path === '#/dashboard') { page = <MemberDashboard currentUser={currentUser} state={AppState} />; activeNav = 'home'; }
+                    else if (path === '#/events') { page = <EventsPage currentUser={currentUser} state={AppState} />; activeNav = 'events'; }
                     else if (path === '#/leaderboard') { page = <LeaderboardPage state={AppState} />; activeNav = 'leaderboard'; }
                     else if (path === '#/profile') { page = <ProfilePage currentUser={currentUser} />; activeNav = 'profile'; }
+                    else if (path === '#/notifications') { page = <NotificationsPage currentUser={currentUser} state={AppState} />; activeNav = 'home'; }
                     else { page = <MemberDashboard currentUser={currentUser} state={AppState} />; activeNav = 'home'; }
                 }
                 
