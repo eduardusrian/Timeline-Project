@@ -103,6 +103,45 @@
         .event-method-offline {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         }
+        
+        /* Menu Toggle Styles */
+        .menu-toggle-button {
+            transition: all 0.3s;
+        }
+        .menu-toggle-button:hover {
+            transform: scale(1.1);
+        }
+        .menu-toggle-button.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+        }
+        
+        /* Side Menu Animation */
+        .side-menu {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+        }
+        .side-menu.open {
+            transform: translateX(0);
+        }
+        
+        /* Overlay */
+        .menu-overlay {
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .menu-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        /* Untuk HP, menu mengambil full width */
+        @media (max-width: 640px) {
+            .side-menu {
+                width: 85%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -110,7 +149,7 @@
 
     <script type="text/babel">
         // -------------------------------------------------------------------
-        // CHAPTER KPI TRACKER - WITH EVENTS & NOTIFICATIONS
+        // CHAPTER KPI TRACKER - WITH HAMBURGER MENU
         // -------------------------------------------------------------------
         
         // === CLEAR ALL OLD DATA - FRESH START ===
@@ -1297,6 +1336,113 @@
                         </div>
                     )}
                 </div>
+            );
+        };
+
+        // ==================== HAMBURGER MENU COMPONENT ====================
+        const HamburgerMenu = ({ currentUser, active, onNavigate }) => {
+            const [isOpen, setIsOpen] = React.useState(false);
+
+            const menuItems = [
+                { id: 'home', icon: 'fas fa-home', label: 'Dashboard', href: '#/dashboard' },
+                { id: 'events', icon: 'fas fa-calendar', label: 'Events', href: '#/events' },
+                { id: 'leaderboard', icon: 'fas fa-trophy', label: 'Leaderboard', href: '#/leaderboard' },
+                { id: 'profile', icon: 'fas fa-user', label: 'Profile', href: '#/profile' }
+            ];
+
+            const toggleMenu = () => {
+                setIsOpen(!isOpen);
+            };
+
+            const handleItemClick = (href) => {
+                window.location.hash = href;
+                setIsOpen(false);
+            };
+
+            return (
+                <>
+                    {/* Menu Toggle Button */}
+                    <button
+                        onClick={toggleMenu}
+                        className={`menu-toggle-button fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg flex items-center justify-center ${
+                            isOpen ? 'active rotate-45' : ''
+                        }`}
+                    >
+                        <i className={`fas ${isOpen ? 'fa-times' : 'fa-bars'} text-2xl transition-transform`}></i>
+                    </button>
+
+                    {/* Overlay */}
+                    <div
+                        className={`menu-overlay fixed inset-0 bg-black bg-opacity-50 z-40 ${
+                            isOpen ? 'open' : ''
+                        }`}
+                        onClick={toggleMenu}
+                    ></div>
+
+                    {/* Side Menu */}
+                    <div
+                        className={`side-menu fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-40 p-6 ${
+                            isOpen ? 'open' : ''
+                        }`}
+                    >
+                        {/* User Info */}
+                        <div className="flex items-center space-x-4 pb-6 mb-6 border-b border-gray-200">
+                            <img
+                                src={currentUser?.avatar}
+                                alt={currentUser?.name}
+                                className="w-16 h-16 rounded-full border-4 border-blue-100 object-cover"
+                            />
+                            <div>
+                                <h3 className="font-bold text-gray-900">{currentUser?.name}</h3>
+                                <p className="text-sm text-gray-600">{currentUser?.businessName}</p>
+                                <div className="flex items-center mt-1">
+                                    <span className={`text-xs px-2 py-1 rounded-full ${
+                                        currentUser?.badge === 'Champion' 
+                                            ? 'bg-yellow-100 text-yellow-800' 
+                                            : 'bg-blue-100 text-blue-800'
+                                    }`}>
+                                        {currentUser?.badge}
+                                    </span>
+                                    <span className="text-xs text-gray-500 ml-2">
+                                        {currentUser?.chapter}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Menu Items */}
+                        <div className="space-y-2">
+                            {menuItems.map(item => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => handleItemClick(item.href)}
+                                    className={`w-full flex items-center space-x-4 p-4 rounded-xl transition-all ${
+                                        active === item.id
+                                            ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
+                                            : 'text-gray-700 hover:bg-gray-100'
+                                    }`}
+                                >
+                                    <i className={`${item.icon} text-xl w-6`}></i>
+                                    <span className="font-medium">{item.label}</span>
+                                    {active === item.id && (
+                                        <i className="fas fa-check-circle ml-auto"></i>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Additional Info */}
+                        <div className="absolute bottom-6 left-6 right-6">
+                            <div className="bg-gray-50 rounded-xl p-4 text-center">
+                                <p className="text-xs text-gray-500 mb-2">Kode Referral</p>
+                                <p className="font-mono font-bold text-blue-600">{currentUser?.referralCode}</p>
+                            </div>
+                            <p className="text-xs text-center text-gray-400 mt-4">
+                                © 2026 Chapter KPI
+                            </p>
+                        </div>
+                    </div>
+                </>
             );
         };
 
@@ -3914,27 +4060,9 @@
             );
         };
 
-        // ==================== BOTTOM NAVIGATION ====================
-        const BottomNav = ({ active = 'home', role = 'member' }) => {
-            const items = [
-                { id: 'home', icon: 'fas fa-home', label: 'Dashboard', href: '#/dashboard' },
-                { id: 'events', icon: 'fas fa-calendar', label: 'Events', href: '#/events' },
-                { id: 'leaderboard', icon: 'fas fa-trophy', label: 'Leaderboard', href: '#/leaderboard' },
-                { id: 'profile', icon: 'fas fa-user', label: 'Profile', href: '#/profile' }
-            ];
-
-            return (
-                <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 bottom-nav-shadow py-2 px-4 flex justify-around items-center z-50">
-                    {items.map(item => (
-                        <a key={item.id} href={item.href} 
-                           className={`flex flex-col items-center p-2 ${active === item.id ? 'text-blue-600' : 'text-gray-500'}`}>
-                            <i className={`${item.icon} text-xl`}></i>
-                            <span className="text-xs mt-1">{item.label}</span>
-                        </a>
-                    ))}
-                </div>
-            );
-        };
+        // ==================== BOTTOM NAVIGATION - HAMBURGER MENU ====================
+        // (Ini udah diganti dengan HamburgerMenu component di atas)
+        // Kita hapus BottomNav yang lama dan pake HamburgerMenu
 
         // ==================== NAVIGATION HEADER ====================
         const Navigation = ({ currentUser, onLogout }) => {
@@ -3942,29 +4070,26 @@
 
             return (
                 <nav className="bg-white shadow-sm sticky top-0 z-40 px-4 py-3">
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center max-w-7xl mx-auto">
                         <div className="flex items-center">
                             <h1 className="text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
                                 KPI Monitoring
                             </h1>
                             {currentUser?.role === 'super_admin' && (
-                                <span className="ml-3 bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
+                                <span className="ml-3 bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full hidden sm:inline-block">
                                     <i className="fas fa-crown mr-1"></i>Super Admin
                                 </span>
                             )}
                             {currentUser?.role === 'member' && currentUser?.badge === 'Champion' && (
-                                <span className="ml-3 bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
+                                <span className="ml-3 bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full hidden sm:inline-block">
                                     <i className="fas fa-crown mr-1"></i>Champion
                                 </span>
                             )}
                         </div>
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2 sm:space-x-4">
                             <NotificationBell currentUser={currentUser} />
-                            <a href="#/events" className="text-gray-600 hover:text-gray-900">
-                                <i className="fas fa-calendar text-xl"></i>
-                            </a>
-                            <span className="text-sm text-gray-700 hidden sm:block">{currentUser?.name}</span>
-                            <button onClick={onLogout} className="text-gray-500 hover:text-gray-700">
+                            <span className="text-sm text-gray-700 hidden md:block">{currentUser?.name}</span>
+                            <button onClick={onLogout} className="text-gray-500 hover:text-gray-700 p-2">
                                 <i className="fas fa-sign-out-alt text-lg"></i>
                             </button>
                         </div>
@@ -4047,8 +4172,8 @@
                 return (
                     <>
                         <Navigation currentUser={currentUser} onLogout={handleLogout} />
-                        <main>{page}</main>
-                        <BottomNav active={activeNav} role={currentUser.role} />
+                        <main className="pb-24">{page}</main>
+                        <HamburgerMenu currentUser={currentUser} active={activeNav} />
                     </>
                 );
             }
