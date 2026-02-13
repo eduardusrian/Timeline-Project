@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>BNI Chapter • KPI Champion</title>
+    <title>KPI Monitoring</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
@@ -24,7 +24,7 @@
 
     <script type="text/babel">
         // -------------------------------------------------------------------
-        // BNI CHAPTER KPI TRACKER - FIXED MODAL PROFILE
+        // trial CHAPTER KPI TRACKER - FIXED MODAL PROFILE
         // -------------------------------------------------------------------
         
         // === CLEAR ALL OLD DATA - FRESH START ===
@@ -59,13 +59,13 @@
         // 1. SUPER ADMIN
         const superAdmin = {
             id: 1,
-            name: 'Andryaas Mamuaya',
+            name: 'Andi Santoso',
             businessName: 'Mamuaya Consulting',
             businessDesc: 'Konsultan bisnis & digital transformation specialist',
             socialLinkedin: 'https://linkedin.com/in/andryaas',
             socialInstagram: 'https://instagram.com/andryaas',
             phone: '+62 812-3456-7890',
-            email: 'superadmin@bni.com',
+            email: 'superadmin@trial.com',
             password: 'admin123',
             role: 'super_admin',
             badge: 'Super Admin',
@@ -87,7 +87,7 @@
                 socialLinkedin: 'https://linkedin.com/in/johnchampion',
                 socialInstagram: 'https://instagram.com/johnchampion',
                 phone: '+62 812-3456-7891',
-                email: 'john@bni.com',
+                email: 'john@trial.com',
                 password: 'john123',
                 role: 'member',
                 badge: 'Champion',
@@ -107,7 +107,7 @@
                 socialLinkedin: 'https://linkedin.com/in/lisabakery',
                 socialInstagram: 'https://instagram.com/lisabakery',
                 phone: '+62 812-3456-7892',
-                email: 'lisa@bni.com',
+                email: 'lisa@trial.com',
                 password: 'lisa123',
                 role: 'member',
                 badge: 'Member',
@@ -127,7 +127,7 @@
                 socialLinkedin: 'https://linkedin.com/in/rudihartono',
                 socialInstagram: 'https://instagram.com/rudidigital',
                 phone: '+62 812-3456-7893',
-                email: 'rudi@bni.com',
+                email: 'rudi@trial.com',
                 password: 'rudi123',
                 role: 'member',
                 badge: 'Member',
@@ -147,7 +147,7 @@
                 socialLinkedin: 'https://linkedin.com/in/susilaw',
                 socialInstagram: 'https://instagram.com/susilawfirm',
                 phone: '+62 812-3456-7894',
-                email: 'susi@bni.com',
+                email: 'susi@trial.com',
                 password: 'susi123',
                 role: 'member',
                 badge: 'Member',
@@ -171,7 +171,7 @@
                 socialLinkedin: 'https://linkedin.com/in/budisantoso',
                 socialInstagram: 'https://instagram.com/budidigital',
                 phone: '+62 812-3456-7895',
-                email: 'budi@bni.com',
+                email: 'budi@trial.com',
                 password: 'budi123',
                 role: 'member',
                 badge: 'Member',
@@ -189,7 +189,7 @@
         const allUsers = [superAdmin, ...members, ...pendingMembers];
         
         // === SAVE KE LOCALSTORAGE ===
-        localStorage.setItem('bni_users', JSON.stringify(allUsers));
+        localStorage.setItem('trial_users', JSON.stringify(allUsers));
 
         // === INIT KPI DATA ===
         const weekInfo = getWeekRange();
@@ -269,16 +269,16 @@
             }
         ];
 
-        localStorage.setItem('bni_kpi', JSON.stringify(kpiData));
+        localStorage.setItem('trial_kpi', JSON.stringify(kpiData));
 
         // === PENDING APPROVALS ===
-        localStorage.setItem('bni_pending_approvals', JSON.stringify([
+        localStorage.setItem('trial_pending_approvals', JSON.stringify([
             {
                 userId: 4,
                 name: 'Budi Santoso',
                 businessName: 'Budi Digital',
                 businessDesc: 'Web development & IT solutions',
-                email: 'budi@bni.com',
+                email: 'budi@trial.com',
                 phone: '+62 812-3456-7895',
                 registeredAt: '2026-02-15',
                 referredBy: 'ANDY001'
@@ -291,7 +291,7 @@
             
             // ============= AUTH =============
             login: function(email, password) {
-                const users = JSON.parse(localStorage.getItem('bni_users')) || [];
+                const users = JSON.parse(localStorage.getItem('trial_users')) || [];
                 const user = users.find(u => u.email === email && u.password === password);
                 
                 if (user) {
@@ -301,7 +301,7 @@
                     
                     const { password, ...userWithoutPassword } = user;
                     this.currentUser = userWithoutPassword;
-                    localStorage.setItem('bni_currentUser', JSON.stringify(userWithoutPassword));
+                    localStorage.setItem('trial_currentUser', JSON.stringify(userWithoutPassword));
                     return { success: true, user: userWithoutPassword };
                 }
                 
@@ -310,12 +310,12 @@
             
             logout: function() {
                 this.currentUser = null;
-                localStorage.removeItem('bni_currentUser');
+                localStorage.removeItem('trial_currentUser');
             },
             
             // ============= REGISTER =============
             register: function(formData) {
-                const users = JSON.parse(localStorage.getItem('bni_users')) || [];
+                const users = JSON.parse(localStorage.getItem('trial_users')) || [];
                 
                 if (users.find(u => u.email === formData.email)) {
                     return { success: false, message: 'Email sudah terdaftar' };
@@ -343,9 +343,9 @@
                 };
 
                 users.push(newUser);
-                localStorage.setItem('bni_users', JSON.stringify(users));
+                localStorage.setItem('trial_users', JSON.stringify(users));
                 
-                const pending = JSON.parse(localStorage.getItem('bni_pending_approvals')) || [];
+                const pending = JSON.parse(localStorage.getItem('trial_pending_approvals')) || [];
                 pending.push({
                     userId: newUser.id,
                     name: newUser.name,
@@ -356,14 +356,14 @@
                     registeredAt: newUser.joinDate,
                     referredBy: newUser.referredBy
                 });
-                localStorage.setItem('bni_pending_approvals', JSON.stringify(pending));
+                localStorage.setItem('trial_pending_approvals', JSON.stringify(pending));
                 
                 return { success: true, message: 'Registrasi berhasil! Menunggu persetujuan Super Admin.' };
             },
             
             // ============= MEMBER PROFILE =============
             getMemberById: function(userId) {
-                const users = JSON.parse(localStorage.getItem('bni_users')) || [];
+                const users = JSON.parse(localStorage.getItem('trial_users')) || [];
                 const user = users.find(u => u.id === userId);
                 if (user) {
                     const { password, ...userWithoutPassword } = user;
@@ -374,21 +374,21 @@
             
             // ============= SUPER ADMIN FUNCTIONS =============
             getPendingApprovals: function() {
-                return JSON.parse(localStorage.getItem('bni_pending_approvals')) || [];
+                return JSON.parse(localStorage.getItem('trial_pending_approvals')) || [];
             },
             
             approveMember: function(userId) {
-                const users = JSON.parse(localStorage.getItem('bni_users')) || [];
-                const pending = JSON.parse(localStorage.getItem('bni_pending_approvals')) || [];
+                const users = JSON.parse(localStorage.getItem('trial_users')) || [];
+                const pending = JSON.parse(localStorage.getItem('trial_pending_approvals')) || [];
                 
                 const userIndex = users.findIndex(u => u.id === userId);
                 if (userIndex > -1) {
                     users[userIndex].isApproved = true;
                     users[userIndex].badge = 'Member';
-                    localStorage.setItem('bni_users', JSON.stringify(users));
+                    localStorage.setItem('trial_users', JSON.stringify(users));
                     
                     const filteredPending = pending.filter(p => p.userId !== userId);
-                    localStorage.setItem('bni_pending_approvals', JSON.stringify(filteredPending));
+                    localStorage.setItem('trial_pending_approvals', JSON.stringify(filteredPending));
                     
                     return true;
                 }
@@ -396,26 +396,26 @@
             },
             
             rejectMember: function(userId) {
-                const users = JSON.parse(localStorage.getItem('bni_users')) || [];
-                const pending = JSON.parse(localStorage.getItem('bni_pending_approvals')) || [];
+                const users = JSON.parse(localStorage.getItem('trial_users')) || [];
+                const pending = JSON.parse(localStorage.getItem('trial_pending_approvals')) || [];
                 
                 const filteredUsers = users.filter(u => u.id !== userId);
-                localStorage.setItem('bni_users', JSON.stringify(filteredUsers));
+                localStorage.setItem('trial_users', JSON.stringify(filteredUsers));
                 
                 const filteredPending = pending.filter(p => p.userId !== userId);
-                localStorage.setItem('bni_pending_approvals', JSON.stringify(filteredPending));
+                localStorage.setItem('trial_pending_approvals', JSON.stringify(filteredPending));
                 
                 return true;
             },
             
             getAllMembers: function() {
-                const users = JSON.parse(localStorage.getItem('bni_users')) || [];
+                const users = JSON.parse(localStorage.getItem('trial_users')) || [];
                 return users.filter(u => u.role === 'member');
             },
             
             getChapterSummary: function() {
                 const members = this.getAllMembers().filter(m => m.isApproved);
-                const kpiData = JSON.parse(localStorage.getItem('bni_kpi')) || [];
+                const kpiData = JSON.parse(localStorage.getItem('trial_kpi')) || [];
                 const currentWeek = getWeekRange().weekNumber;
                 
                 const currentWeekKPI = kpiData.filter(k => k.weekNumber === currentWeek);
@@ -441,7 +441,7 @@
             
             // ============= KPI FUNCTIONS =============
             getCurrentWeekKPI: function(userId) {
-                const kpiData = JSON.parse(localStorage.getItem('bni_kpi')) || [];
+                const kpiData = JSON.parse(localStorage.getItem('trial_kpi')) || [];
                 const currentWeek = getWeekRange().weekNumber;
                 const currentYear = new Date().getFullYear();
                 
@@ -467,7 +467,7 @@
                     };
                     
                     kpiData.push(weekKPI);
-                    localStorage.setItem('bni_kpi', JSON.stringify(kpiData));
+                    localStorage.setItem('trial_kpi', JSON.stringify(kpiData));
                 }
                 
                 weekKPI.totalPoints = weekKPI.kpi.reduce((sum, k) => sum + (k.completed ? k.points : 0), 0);
@@ -477,7 +477,7 @@
             },
             
             updateKPI: function(userId, kpiId, value, type) {
-                const kpiData = JSON.parse(localStorage.getItem('bni_kpi')) || [];
+                const kpiData = JSON.parse(localStorage.getItem('trial_kpi')) || [];
                 const currentWeek = getWeekRange().weekNumber;
                 const currentYear = new Date().getFullYear();
                 
@@ -497,7 +497,7 @@
                         kpiData[weekIndex].totalPoints = kpiData[weekIndex].kpi.reduce((sum, k) => sum + (k.completed ? k.points : 0), 0);
                         kpiData[weekIndex].percentage = Math.round((kpiData[weekIndex].totalPoints / kpiData[weekIndex].maxPoints) * 100);
                         
-                        localStorage.setItem('bni_kpi', JSON.stringify(kpiData));
+                        localStorage.setItem('trial_kpi', JSON.stringify(kpiData));
                         return kpiData[weekIndex];
                     }
                 }
@@ -505,7 +505,7 @@
             },
             
             getMemberKPISummary: function(userId) {
-                const kpiData = JSON.parse(localStorage.getItem('bni_kpi')) || [];
+                const kpiData = JSON.parse(localStorage.getItem('trial_kpi')) || [];
                 const userKPI = kpiData.filter(k => k.userId === userId);
                 
                 const recent = userKPI.sort((a, b) => b.weekNumber - a.weekNumber).slice(0, 4);
@@ -523,7 +523,7 @@
             
             getAllMembersKPI: function() {
                 const members = this.getAllMembers().filter(m => m.isApproved);
-                const kpiData = JSON.parse(localStorage.getItem('bni_kpi')) || [];
+                const kpiData = JSON.parse(localStorage.getItem('trial_kpi')) || [];
                 const currentWeek = getWeekRange().weekNumber;
                 
                 return members.map(member => {
@@ -793,19 +793,19 @@
             };
 
             const fillSuperAdmin = () => {
-                setEmail('superadmin@bni.com');
+                setEmail('superadmin@trial.com');
                 setPassword('admin123');
                 setError('');
             };
             
             const fillJohn = () => {
-                setEmail('john@bni.com');
+                setEmail('john@trial.com');
                 setPassword('john123');
                 setError('');
             };
 
             const fillLisa = () => {
-                setEmail('lisa@bni.com');
+                setEmail('lisa@trial.com');
                 setPassword('lisa123');
                 setError('');
             };
@@ -815,7 +815,7 @@
                     <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
                         <div className="text-center mb-8">
                             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
-                                BNI Chapter KPI
+                                trial Chapter KPI
                             </h1>
                             <p className="text-gray-600 mt-2">Champion Performance Dashboard</p>
                         </div>
@@ -834,7 +834,7 @@
                                     value={email} 
                                     onChange={(e) => setEmail(e.target.value)} 
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" 
-                                    placeholder="email@bni.com" 
+                                    placeholder="email@trial.com" 
                                     required 
                                 />
                             </div>
@@ -874,7 +874,7 @@
                                         <i className="fas fa-crown text-purple-600 mr-3"></i>
                                         <span className="font-medium">Super Admin</span>
                                     </div>
-                                    <span className="text-sm text-gray-600">superadmin@bni.com / admin123</span>
+                                    <span className="text-sm text-gray-600">superadmin@trial.com / admin123</span>
                                 </button>
                                 
                                 <button 
@@ -885,7 +885,7 @@
                                         <i className="fas fa-trophy text-yellow-600 mr-3"></i>
                                         <span className="font-medium">Champion Member</span>
                                     </div>
-                                    <span className="text-sm text-gray-600">john@bni.com / john123</span>
+                                    <span className="text-sm text-gray-600">john@trial.com / john123</span>
                                 </button>
                                 
                                 <button 
@@ -896,7 +896,7 @@
                                         <i className="fas fa-user text-blue-600 mr-3"></i>
                                         <span className="font-medium">Regular Member</span>
                                     </div>
-                                    <span className="text-sm text-gray-600">lisa@bni.com / lisa123</span>
+                                    <span className="text-sm text-gray-600">lisa@trial.com / lisa123</span>
                                 </button>
                             </div>
                         </div>
@@ -955,7 +955,7 @@
                 <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
                     <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8">
                         <div className="text-center mb-8">
-                            <h1 className="text-2xl font-bold text-gray-900">Registrasi Member BNI Chapter</h1>
+                            <h1 className="text-2xl font-bold text-gray-900">Registrasi Member trial Chapter</h1>
                             <p className="text-gray-600 mt-2">Isi data lengkap untuk bergabung</p>
                         </div>
                         
@@ -1605,7 +1605,7 @@
                 <div className="flex justify-between items-center">
                     <div className="flex items-center">
                         <h1 className="text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
-                            BNI KPI Champion
+                            trial KPI Champion
                         </h1>
                         {currentUser?.role === 'super_admin' && (
                             <span className="ml-3 bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
@@ -1631,7 +1631,7 @@
         // ==================== MAIN APP ====================
         const App = () => {
             const [currentUser, setCurrentUser] = React.useState(() => {
-                const saved = localStorage.getItem('bni_currentUser');
+                const saved = localStorage.getItem('trial_currentUser');
                 return saved ? JSON.parse(saved) : null;
             });
             const [currentPath, setCurrentPath] = React.useState(window.location.hash || '#/dashboard');
