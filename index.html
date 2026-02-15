@@ -278,6 +278,11 @@
             border-radius: 0.5rem;
             border: 2px solid white;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .event-flyer-thumbnail:hover {
+            transform: scale(1.05);
         }
         
         .flyer-preview {
@@ -288,19 +293,34 @@
             padding: 0.25rem;
         }
 
-        /* Sticky Header dengan padding yang pas */
+        /* STICKY HEADER - FROZEN dengan padding yang pas */
         .sticky-header {
             position: sticky;
             top: 0;
-            z-index: 40;
+            z-index: 50;
             background-color: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             padding: 0.75rem 1rem;
+            width: 100%;
         }
 
-        /* Content padding top untuk mengimbangi header */
-        .content-with-sticky-header {
-            padding-top: 0.5rem;
+        /* Container untuk konten utama dengan padding-top yang pas */
+        .main-content {
+            min-height: calc(100vh - 64px); /* kurangi tinggi header */
+            padding-top: 1rem;
+            padding-bottom: 2rem;
+        }
+
+        /* Fix untuk padding di mobile */
+        @media (max-width: 640px) {
+            .main-content {
+                padding-top: 0.75rem;
+            }
+        }
+
+        /* Fix untuk notifikasi dropdown agar tidak ketutupan header */
+        .notification-dropdown {
+            top: 60px !important;
         }
     </style>
 </head>
@@ -309,7 +329,7 @@
 
     <script type="text/babel">
         // -------------------------------------------------------------------
-        // CHAPTER KPI TRACKER - WITH CUTOFF INFO & RESPONSIVE FIX + FLYER UPLOAD
+        // CHAPTER KPI TRACKER - WITH STICKY HEADER FIX
         // -------------------------------------------------------------------
         
         // === CLEAR ALL OLD DATA - FRESH START ===
@@ -1491,7 +1511,7 @@
                     </button>
 
                     {showDropdown && (
-                        <div className="notification-dropdown absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-50 border border-gray-200 max-h-[80vh] overflow-y-auto">
+                        <div className="notification-dropdown absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-[60] border border-gray-200 max-h-[80vh] overflow-y-auto">
                             <div className="p-3 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
                                 <h3 className="font-semibold text-gray-900">Notifikasi</h3>
                                 {unreadCount > 0 && (
@@ -3244,7 +3264,7 @@
             const weekRange = `${weekInfo.monday.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} - ${weekInfo.sunday.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`;
 
             return (
-                <div className="max-w-7xl mx-auto px-4 pb-24 content-with-sticky-header">
+                <div className="max-w-7xl mx-auto px-4 pb-24">
                     {/* Header Profile with Avatar Upload */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
                         <div className="flex items-center space-x-4">
@@ -3554,7 +3574,7 @@
             const weekRange = `${weekInfo.monday.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} - ${weekInfo.sunday.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`;
 
             return (
-                <div className="max-w-7xl mx-auto px-4 pb-24 content-with-sticky-header">
+                <div className="max-w-7xl mx-auto px-4 pb-24">
                     {/* Header */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
                         <div className="flex items-center space-x-4">
@@ -3817,7 +3837,7 @@
             };
 
             return (
-                <div className="max-w-7xl mx-auto px-4 pb-24 content-with-sticky-header">
+                <div className="max-w-7xl mx-auto px-4 pb-24">
                     <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Events</h1>
                     <p className="text-sm text-gray-600 mb-6">Daftar event chapter</p>
 
@@ -3904,7 +3924,7 @@
             };
 
             return (
-                <div className="max-w-7xl mx-auto px-4 pb-24 content-with-sticky-header">
+                <div className="max-w-7xl mx-auto px-4 pb-24">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
                         <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-0">Notifikasi</h1>
                         {notifications.some(n => !n.isRead) && (
@@ -3992,7 +4012,7 @@
             });
 
             return (
-                <div className="max-w-7xl mx-auto px-4 pb-24 content-with-sticky-header">
+                <div className="max-w-7xl mx-auto px-4 pb-24">
                     <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Leaderboard</h1>
                     <p className="text-sm text-gray-600 mb-4">Minggu {weekInfo.weekNumber} • {weekInfo.startFormatted} - {weekInfo.endFormatted}</p>
                     
@@ -4122,7 +4142,7 @@
             };
 
             return (
-                <div className="max-w-7xl mx-auto px-4 pb-24 content-with-sticky-header">
+                <div className="max-w-7xl mx-auto px-4 pb-24">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
                         <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-0">Profile Saya</h1>
                         <Button 
@@ -4369,7 +4389,7 @@
                 <>
                     {/* Overlay */}
                     <div
-                        className={`menu-overlay fixed inset-0 bg-black bg-opacity-50 z-40 ${
+                        className={`menu-overlay fixed inset-0 bg-black bg-opacity-50 z-[70] ${
                             isOpen ? 'open' : ''
                         }`}
                         onClick={onClose}
@@ -4377,7 +4397,7 @@
 
                     {/* Side Menu */}
                     <div
-                        className={`side-menu fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-40 p-6 overflow-y-auto ${
+                        className={`side-menu fixed top-0 right-0 h-full w-80 bg-white shadow-2xl z-[80] p-6 overflow-y-auto ${
                             isOpen ? 'open' : ''
                         }`}
                     >
@@ -4447,7 +4467,7 @@
             return (
                 <>
                     {/* STICKY HEADER - FROZEN */}
-                    <nav className="bg-white shadow-sm sticky-header">
+                    <nav className="sticky-header">
                         <div className="flex justify-between items-center max-w-7xl mx-auto">
                             <div className="flex items-center min-w-0">
                                 <h1 className="text-base sm:text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent truncate">
@@ -4565,12 +4585,10 @@
                 return (
                     <>
                         <Navigation currentUser={currentUser} onLogout={handleLogout} />
-                        <main className="min-h-screen flex flex-col">
-                            <div className="flex-1">
-                                {page}
-                            </div>
-                            <Footer />
+                        <main className="main-content">
+                            {page}
                         </main>
+                        <Footer />
                     </>
                 );
             }
