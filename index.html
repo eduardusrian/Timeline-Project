@@ -9,7 +9,26 @@
     <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        #root {
+            width: 100%;
+            overflow-x: hidden;
+        }
+        
         .bottom-nav-shadow { box-shadow: 0 -4px 12px rgba(0,0,0,0.03); }
         .kpi-card-completed { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); }
         .kpi-card-pending { background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); }
@@ -17,13 +36,24 @@
             background-color: rgba(0,0,0,0.5);
             backdrop-filter: blur(4px);
         }
+        
+        /* Leaderboard Container Responsif */
         .leaderboard-container {
-            max-height: calc(100vh - 250px);
+            max-height: calc(100vh - 300px);
             overflow-y: auto;
             padding-right: 4px;
+            -webkit-overflow-scrolling: touch;
         }
+        
+        @media (max-width: 640px) {
+            .leaderboard-container {
+                max-height: calc(100vh - 280px);
+                padding-right: 2px;
+            }
+        }
+        
         .leaderboard-container::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
         }
         .leaderboard-container::-webkit-scrollbar-track {
             background: #f1f1f1;
@@ -33,6 +63,8 @@
             background: #cbd5e0;
             border-radius: 10px;
         }
+        
+        /* Avatar Upload */
         .avatar-upload {
             position: relative;
             display: inline-block;
@@ -58,6 +90,8 @@
         .file-input {
             display: none;
         }
+        
+        /* Modal Animations */
         .edit-profile-modal {
             animation: slideUp 0.3s ease-out;
         }
@@ -71,18 +105,24 @@
                 opacity: 1;
             }
         }
+        
+        /* KPI Button */
         .kpi-button {
             transition: all 0.2s;
         }
         .kpi-button:active {
             transform: scale(0.95);
         }
+        
+        /* Event Card */
         .event-card {
             transition: all 0.3s;
         }
         .event-card:hover {
             transform: translateY(-2px);
         }
+        
+        /* Notification Badge */
         .notification-badge {
             animation: pulse 2s infinite;
         }
@@ -97,6 +137,8 @@
                 transform: scale(1);
             }
         }
+        
+        /* Event Methods */
         .event-method-online {
             background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
         }
@@ -104,7 +146,7 @@
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         }
         
-        /* Menu Toggle Styles */
+        /* Menu Toggle */
         .menu-toggle-button {
             transition: all 0.3s;
         }
@@ -116,7 +158,7 @@
             color: white;
         }
         
-        /* Side Menu Animation */
+        /* Side Menu */
         .side-menu {
             transition: transform 0.3s ease-in-out;
             transform: translateX(100%);
@@ -136,14 +178,14 @@
             pointer-events: auto;
         }
         
-        /* Untuk HP, menu mengambil full width */
+        /* Responsive Side Menu */
         @media (max-width: 640px) {
             .side-menu {
                 width: 85%;
             }
         }
         
-        /* PRIMA+ Logo Style */
+        /* PRIMA+ Logo */
         .prima-logo {
             font-family: 'Arial Black', sans-serif;
             letter-spacing: 1px;
@@ -153,6 +195,80 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        
+        /* Footer */
+        .footer {
+            border-top: 1px solid #e5e7eb;
+            background: white;
+            margin-top: 2rem;
+        }
+        
+        /* Notification Dropdown Responsif */
+        @media (max-width: 640px) {
+            .notification-dropdown {
+                position: fixed !important;
+                top: 60px !important;
+                right: 10px !important;
+                left: 10px !important;
+                width: auto !important;
+                max-width: none !important;
+                margin: 0 !important;
+            }
+        }
+        
+        /* Table Responsif */
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -1rem;
+            padding: 0 1rem;
+        }
+        
+        .table-container table {
+            min-width: 800px;
+        }
+        
+        /* Card Responsif */
+        @media (max-width: 640px) {
+            .card-padding {
+                padding: 1rem;
+            }
+            
+            .grid-cols-responsive {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .text-responsive {
+                font-size: 0.875rem;
+            }
+            
+            .hide-on-mobile {
+                display: none;
+            }
+        }
+        
+        /* Week Info Card */
+        .week-info-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Cut Off Info */
+        .cutoff-info {
+            background: linear-gradient(135deg, #f6d5f7 0%, #fbe9d7 100%);
+            border-left: 4px solid #8b5cf6;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .cutoff-info strong {
+            color: #7c3aed;
+        }
     </style>
 </head>
 <body>
@@ -160,7 +276,7 @@
 
     <script type="text/babel">
         // -------------------------------------------------------------------
-        // CHAPTER KPI TRACKER - WITH HAMBURGER MENU IN HEADER (FIXED)
+        // CHAPTER KPI TRACKER - WITH CUTOFF INFO & RESPONSIVE FIX
         // -------------------------------------------------------------------
         
         // === CLEAR ALL OLD DATA - FRESH START ===
@@ -181,12 +297,27 @@
             monday.setDate(today.getDate() - today.getDay() + 1);
             const sunday = new Date(monday);
             sunday.setDate(monday.getDate() + 6);
+            
+            // Format tanggal Indonesia
+            const formatDate = (date) => {
+                return date.toLocaleDateString('id-ID', { 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric' 
+                });
+            };
+            
             return {
                 start: monday.toISOString().split('T')[0],
                 end: sunday.toISOString().split('T')[0],
                 monday: monday,
                 sunday: sunday,
-                weekNumber: getWeekNumber(monday)
+                weekNumber: getWeekNumber(monday),
+                startFormatted: formatDate(monday),
+                endFormatted: formatDate(sunday),
+                // Info cut-off: Senin 00:00 - Minggu 23:59
+                cutoffStart: 'Senin, 00:00 WIB',
+                cutoffEnd: 'Minggu, 23:59 WIB'
             };
         }
 
@@ -620,7 +751,7 @@
             },
             {
                 id: 2,
-                title: 'Trial Networking Night',
+                title: 'BNI Networking Night',
                 date: '2026-02-25',
                 time: '18:30',
                 speaker: 'Dimas Prayoga',
@@ -628,7 +759,7 @@
                 location: 'Hotel Indonesia Kempinski',
                 address: 'Jl. M.H. Thamrin No.1, Jakarta Pusat',
                 mapLink: 'https://maps.app.goo.gl/xyz',
-                description: 'Networking session antar member Trial',
+                description: 'Networking session antar member BNI',
                 createdBy: 1,
                 createdAt: '2026-02-13',
                 attendees: [2, 4, 5, 8],
@@ -655,7 +786,7 @@
                 userId: null,
                 type: 'event',
                 eventId: 2,
-                title: 'Event Baru: Trial Networking Night',
+                title: 'Event Baru: BNI Networking Night',
                 message: 'Networking Night akan diadakan pada 25 Februari 2026',
                 isRead: false,
                 createdAt: '2026-02-13'
@@ -1147,12 +1278,53 @@
             getUnreadNotificationCount: function(userId) {
                 const notifications = this.getUserNotifications(userId);
                 return notifications.filter(n => !n.isRead).length;
+            },
+
+            // ============= CLEANUP NOTIFICATIONS =============
+            cleanupExpiredNotifications: function() {
+                const notifications = this.getNotifications();
+                const events = this.getEvents();
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                let changed = false;
+                
+                // Filter notifikasi yang masih valid
+                const validNotifications = notifications.filter(notification => {
+                    // Notifikasi event
+                    if (notification.type === 'event' && notification.eventId) {
+                        const event = events.find(e => e.id === notification.eventId);
+                        if (event) {
+                            const eventDate = new Date(event.date);
+                            eventDate.setHours(0, 0, 0, 0);
+                            // Hapus jika event sudah lewat
+                            if (eventDate < today) {
+                                changed = true;
+                                return false;
+                            }
+                            return true;
+                        } else {
+                            // Event tidak ditemukan (mungkin sudah dihapus)
+                            changed = true;
+                            return false;
+                        }
+                    }
+                    // Notifikasi non-event tetap dipertahankan
+                    return true;
+                });
+                
+                // Simpan kembali jika ada perubahan
+                if (changed) {
+                    localStorage.setItem('chapter_notifications', JSON.stringify(validNotifications));
+                }
+                
+                return validNotifications.length;
             }
         };
 
         // ==================== COMPONENTS ====================
         const Button = ({ children, onClick, variant = 'primary', className = '' }) => {
-            const base = 'px-4 py-2 rounded-lg font-semibold transition-all duration-200';
+            const base = 'px-4 py-2 rounded-lg font-semibold transition-all duration-200 text-sm sm:text-base';
             const variants = {
                 primary: 'bg-blue-600 text-white hover:bg-blue-700',
                 secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
@@ -1164,7 +1336,7 @@
         };
 
         const Card = ({ children, className = '' }) => (
-            <div className={`bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-5 ${className}`}>{children}</div>
+            <div className={`bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-4 sm:p-5 ${className}`}>{children}</div>
         );
 
         // ==================== AVATAR UPLOAD COMPONENT ====================
@@ -1208,7 +1380,7 @@
                     <img 
                         src={currentUser?.avatar} 
                         alt={currentUser?.name} 
-                        className="w-24 h-24 rounded-full border-4 border-blue-100 object-cover"
+                        className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-blue-100 object-cover"
                     />
                     <div 
                         className="avatar-overlay"
@@ -1231,7 +1403,7 @@
             );
         };
 
-        // ==================== NOTIFICATION COMPONENT ====================
+        // ==================== NOTIFICATION COMPONENT (RESPONSIF) ====================
         const NotificationBell = ({ currentUser }) => {
             const [showDropdown, setShowDropdown] = React.useState(false);
             const [notifications, setNotifications] = React.useState([]);
@@ -1245,6 +1417,7 @@
             }, []);
 
             const loadNotifications = () => {
+                AppState.cleanupExpiredNotifications(); // Bersihkan notifikasi kadaluarsa
                 const userNotifications = AppState.getUserNotifications(currentUser?.id);
                 setNotifications(userNotifications);
                 setUnreadCount(userNotifications.filter(n => !n.isRead).length);
@@ -1283,8 +1456,8 @@
                     </button>
 
                     {showDropdown && (
-                        <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-50 border border-gray-200">
-                            <div className="p-3 border-b border-gray-200 flex justify-between items-center">
+                        <div className="notification-dropdown absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-50 border border-gray-200 max-h-[80vh] overflow-y-auto">
+                            <div className="p-3 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
                                 <h3 className="font-semibold text-gray-900">Notifikasi</h3>
                                 {unreadCount > 0 && (
                                     <button
@@ -1295,7 +1468,7 @@
                                     </button>
                                 )}
                             </div>
-                            <div className="max-h-96 overflow-y-auto">
+                            <div className="overflow-y-auto">
                                 {notifications.length > 0 ? (
                                     notifications.map(notification => (
                                         <div
@@ -1306,20 +1479,20 @@
                                             }`}
                                         >
                                             <div className="flex items-start">
-                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 flex-shrink-0 ${
                                                     notification.type === 'event' 
                                                         ? 'bg-purple-100 text-purple-600'
                                                         : 'bg-blue-100 text-blue-600'
                                                 }`}>
                                                     <i className={`fas ${
                                                         notification.type === 'event' ? 'fa-calendar' : 'fa-bell'
-                                                    }`}></i>
+                                                    } text-sm`}></i>
                                                 </div>
-                                                <div className="flex-1">
-                                                    <p className="text-sm font-medium text-gray-900">
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-sm font-medium text-gray-900 truncate">
                                                         {notification.title}
                                                     </p>
-                                                    <p className="text-xs text-gray-600 mt-1">
+                                                    <p className="text-xs text-gray-600 mt-1 line-clamp-2">
                                                         {notification.message}
                                                     </p>
                                                     <p className="text-xs text-gray-400 mt-1">
@@ -1327,7 +1500,7 @@
                                                     </p>
                                                 </div>
                                                 {!notification.isRead && (
-                                                    <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                                                    <span className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0"></span>
                                                 )}
                                             </div>
                                         </div>
@@ -1339,7 +1512,7 @@
                                     </div>
                                 )}
                             </div>
-                            <div className="p-2 border-t border-gray-200 text-center">
+                            <div className="p-2 border-t border-gray-200 text-center sticky bottom-0 bg-white">
                                 <a href="#/notifications" className="text-xs text-blue-600 hover:text-blue-800">
                                     Lihat semua notifikasi
                                 </a>
@@ -1415,17 +1588,17 @@
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" onClick={onClose}>
                     <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto edit-profile-modal" onClick={e => e.stopPropagation()}>
                         {/* Header */}
-                        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4 rounded-t-2xl flex justify-between items-center sticky top-0">
+                        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 sm:px-6 py-4 rounded-t-2xl flex justify-between items-center sticky top-0">
                             <div className="flex items-center text-white">
                                 <i className="fas fa-calendar-plus mr-3 text-xl"></i>
-                                <h2 className="text-xl font-bold">Buat Event Baru</h2>
+                                <h2 className="text-lg sm:text-xl font-bold">Buat Event Baru</h2>
                             </div>
                             <button onClick={onClose} className="text-white hover:text-gray-200 transition">
                                 <i className="fas fa-times text-2xl"></i>
                             </button>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
                             {error && (
                                 <div className="bg-red-50 text-red-700 p-3 rounded-lg text-sm border border-red-200">
                                     <i className="fas fa-exclamation-circle mr-2"></i>{error}
@@ -1440,14 +1613,14 @@
                                     name="title"
                                     value={formData.title}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm"
                                     placeholder="Contoh: Weekly Chapter Meeting"
                                     required
                                 />
                             </div>
 
                             {/* Tanggal dan Waktu */}
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Tanggal *</label>
                                     <input
@@ -1455,7 +1628,7 @@
                                         name="date"
                                         value={formData.date}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm"
                                         required
                                     />
                                 </div>
@@ -1466,14 +1639,14 @@
                                         name="time"
                                         value={formData.time}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm"
                                         required
                                     />
                                 </div>
                             </div>
 
                             {/* Speaker dan Chapter */}
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Speaker (Opsional)</label>
                                     <input
@@ -1481,7 +1654,7 @@
                                         name="speaker"
                                         value={formData.speaker}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm"
                                         placeholder="Nama pembicara"
                                     />
                                 </div>
@@ -1491,7 +1664,7 @@
                                         name="chapter"
                                         value={formData.chapter}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm bg-white"
                                     >
                                         <option value="All Chapters">Semua Chapter</option>
                                         {chapters.map(chapter => (
@@ -1506,7 +1679,7 @@
                             {/* Metode Event */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Metode *</label>
-                                <div className="flex space-x-4">
+                                <div className="flex flex-wrap gap-4">
                                     <label className="flex items-center">
                                         <input
                                             type="radio"
@@ -1516,7 +1689,7 @@
                                             onChange={handleChange}
                                             className="mr-2"
                                         />
-                                        <span>Online</span>
+                                        <span className="text-sm">Online</span>
                                     </label>
                                     <label className="flex items-center">
                                         <input
@@ -1527,7 +1700,7 @@
                                             onChange={handleChange}
                                             className="mr-2"
                                         />
-                                        <span>Offline</span>
+                                        <span className="text-sm">Offline</span>
                                     </label>
                                 </div>
                             </div>
@@ -1541,7 +1714,7 @@
                                         name="link"
                                         value={formData.link}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm"
                                         placeholder="https://zoom.us/j/xxx"
                                         required={formData.method === 'online'}
                                     />
@@ -1557,7 +1730,7 @@
                                             name="location"
                                             value={formData.location}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm"
                                             placeholder="Contoh: Hotel Indonesia Kempinski"
                                             required={formData.method === 'offline'}
                                         />
@@ -1569,7 +1742,7 @@
                                             value={formData.address}
                                             onChange={handleChange}
                                             rows="2"
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm"
                                             placeholder="Jl. M.H. Thamrin No.1, Jakarta Pusat"
                                             required={formData.method === 'offline'}
                                         />
@@ -1581,7 +1754,7 @@
                                             name="mapLink"
                                             value={formData.mapLink}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm"
                                             placeholder="https://maps.app.goo.gl/xxx"
                                         />
                                     </div>
@@ -1596,17 +1769,17 @@
                                     value={formData.description}
                                     onChange={handleChange}
                                     rows="3"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 text-sm"
                                     placeholder="Informasi tambahan tentang event..."
                                 />
                             </div>
 
                             {/* Buttons */}
-                            <div className="flex space-x-4 pt-4">
+                            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 pt-4">
                                 <Button
                                     type="submit"
                                     variant="primary"
-                                    className="flex-1 py-3 bg-purple-600 hover:bg-purple-700"
+                                    className="flex-1 py-3 bg-purple-600 hover:bg-purple-700 text-sm"
                                     disabled={loading}
                                 >
                                     {loading ? (
@@ -1619,7 +1792,7 @@
                                     type="button"
                                     variant="secondary"
                                     onClick={onClose}
-                                    className="px-6"
+                                    className="px-6 text-sm"
                                 >
                                     Batal
                                 </Button>
@@ -1655,10 +1828,17 @@
                 });
             };
 
+            // Cek apakah event sudah lewat
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const eventDate = new Date(event.date);
+            eventDate.setHours(0, 0, 0, 0);
+            const isExpired = eventDate < today;
+
             return (
-                <Card className={`event-card overflow-hidden ${showDetails ? 'ring-2 ring-purple-400' : ''}`}>
+                <Card className={`event-card overflow-hidden ${showDetails ? 'ring-2 ring-purple-400' : ''} ${isExpired ? 'opacity-75' : ''}`}>
                     {/* Header dengan warna berdasarkan metode */}
-                    <div className={`-mx-5 -mt-5 px-5 py-3 mb-4 ${
+                    <div className={`-mx-4 -mt-4 px-4 sm:-mx-5 sm:-mt-5 sm:px-5 py-3 mb-4 ${
                         event.method === 'online' ? 'event-method-online' : 'event-method-offline'
                     } text-white`}>
                         <div className="flex justify-between items-center">
@@ -1669,8 +1849,13 @@
                                 <span className="text-sm font-medium uppercase">
                                     {event.method === 'online' ? 'Online' : 'Offline'}
                                 </span>
+                                {isExpired && (
+                                    <span className="ml-3 text-xs bg-white bg-opacity-20 px-2 py-1 rounded-full">
+                                        <i className="fas fa-clock mr-1"></i>Berakhir
+                                    </span>
+                                )}
                             </div>
-                            {currentUser?.role === 'super_admin' && (
+                            {currentUser?.role === 'super_admin' && !isExpired && (
                                 <button
                                     onClick={() => onDelete(event.id)}
                                     className="text-white hover:text-red-200 transition"
@@ -1684,34 +1869,34 @@
                     {/* Content */}
                     <div className="space-y-3">
                         <div>
-                            <h3 className="text-lg font-bold text-gray-900">{event.title}</h3>
+                            <h3 className="text-base sm:text-lg font-bold text-gray-900">{event.title}</h3>
                             {event.speaker && (
-                                <p className="text-sm text-gray-600">
+                                <p className="text-xs sm:text-sm text-gray-600">
                                     <i className="fas fa-microphone-alt mr-2 text-purple-500"></i>
                                     Speaker: {event.speaker}
                                 </p>
                             )}
                         </div>
 
-                        <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
                             <div className="flex items-center text-gray-600">
                                 <i className="fas fa-calendar mr-2 text-blue-500 w-4"></i>
-                                {formatDate(event.date)}
+                                <span className="truncate">{formatDate(event.date)}</span>
                             </div>
                             <div className="flex items-center text-gray-600">
                                 <i className="fas fa-clock mr-2 text-green-500 w-4"></i>
-                                {event.time} WIB
+                                <span>{event.time} WIB</span>
                             </div>
                         </div>
 
-                        {event.method === 'online' && event.link && (
+                        {event.method === 'online' && event.link && !isExpired && (
                             <div className="bg-blue-50 p-3 rounded-lg">
                                 <p className="text-xs text-gray-600 mb-1">Link Meeting:</p>
                                 <a 
                                     href={event.link} 
                                     target="_blank" 
                                     rel="noopener noreferrer"
-                                    className="text-blue-600 hover:underline text-sm break-all"
+                                    className="text-blue-600 hover:underline text-xs sm:text-sm break-all"
                                 >
                                     <i className="fas fa-video mr-2"></i>
                                     {event.link}
@@ -1719,9 +1904,9 @@
                             </div>
                         )}
 
-                        {event.method === 'offline' && event.location && (
+                        {event.method === 'offline' && event.location && !isExpired && (
                             <div className="bg-green-50 p-3 rounded-lg">
-                                <p className="font-medium text-gray-900">{event.location}</p>
+                                <p className="font-medium text-gray-900 text-sm">{event.location}</p>
                                 <p className="text-xs text-gray-600 mt-1">{event.address}</p>
                                 {event.mapLink && (
                                     <a 
@@ -1738,7 +1923,7 @@
                         )}
 
                         {event.description && (
-                            <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                            <p className="text-xs sm:text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
                                 {event.description}
                             </p>
                         )}
@@ -1764,10 +1949,10 @@
                                 </span>
                             </div>
                             
-                            {currentUser?.role !== 'super_admin' && (
+                            {currentUser?.role !== 'super_admin' && !isExpired && (
                                 <button
                                     onClick={isJoined ? handleLeave : handleJoin}
-                                    className={`px-4 py-1 rounded-full text-sm font-medium transition ${
+                                    className={`px-3 py-1 rounded-full text-xs font-medium transition ${
                                         isJoined 
                                             ? 'bg-red-100 text-red-600 hover:bg-red-200' 
                                             : 'bg-green-100 text-green-600 hover:bg-green-200'
@@ -1775,6 +1960,13 @@
                                 >
                                     {isJoined ? 'Batal' : 'Ikut'}
                                 </button>
+                            )}
+
+                            {isExpired && (
+                                <span className="text-xs text-gray-400">
+                                    <i className="fas fa-hourglass-end mr-1"></i>
+                                    Selesai
+                                </span>
                             )}
                         </div>
                     </div>
@@ -1899,24 +2091,24 @@
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" onClick={onClose}>
                     <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto edit-profile-modal" onClick={e => e.stopPropagation()}>
                         {/* Header */}
-                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 rounded-t-2xl flex justify-between items-center sticky top-0">
+                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 sm:px-6 py-4 rounded-t-2xl flex justify-between items-center sticky top-0">
                             <div className="flex items-center text-white">
                                 <i className="fas fa-edit mr-3 text-xl"></i>
-                                <h2 className="text-xl font-bold">Edit Profile</h2>
+                                <h2 className="text-lg sm:text-xl font-bold">Edit Profile</h2>
                             </div>
                             <button onClick={onClose} className="text-white hover:text-gray-200 transition">
                                 <i className="fas fa-times text-2xl"></i>
                             </button>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-6">
                             {/* Info yang tidak bisa diedit */}
                             <div className="bg-blue-50 p-4 rounded-lg">
                                 <p className="text-sm text-blue-800 mb-2">
                                     <i className="fas fa-info-circle mr-2"></i>
                                     Info yang tidak bisa diubah:
                                 </p>
-                                <div className="grid grid-cols-2 gap-2 text-sm">
+                                <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
                                     <div>
                                         <span className="text-gray-600">Role:</span>
                                         <span className="ml-2 font-medium">{currentUser?.role}</span>
@@ -1949,7 +2141,7 @@
                             )}
 
                             {/* Form Fields */}
-                            <div className="grid md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap *</label>
                                     <input
@@ -1958,7 +2150,7 @@
                                         value={formData.name}
                                         onChange={handleChange}
                                         required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                     />
                                 </div>
 
@@ -1970,7 +2162,7 @@
                                         value={formData.email}
                                         onChange={handleChange}
                                         required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                     />
                                 </div>
 
@@ -1982,7 +2174,7 @@
                                         value={formData.phone}
                                         onChange={handleChange}
                                         required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                     />
                                 </div>
 
@@ -1994,18 +2186,18 @@
                                         value={formData.businessName}
                                         onChange={handleChange}
                                         required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                     />
                                 </div>
 
-                                <div className="md:col-span-2">
+                                <div className="sm:col-span-2">
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Deskripsi Bisnis</label>
                                     <textarea
                                         name="businessDesc"
                                         value={formData.businessDesc}
                                         onChange={handleChange}
                                         rows="3"
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                     />
                                 </div>
 
@@ -2017,7 +2209,7 @@
                                         value={formData.socialLinkedin}
                                         onChange={handleChange}
                                         placeholder="https://linkedin.com/in/username"
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                     />
                                 </div>
 
@@ -2029,7 +2221,7 @@
                                         value={formData.socialInstagram}
                                         onChange={handleChange}
                                         placeholder="https://instagram.com/username"
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                     />
                                 </div>
                             </div>
@@ -2039,7 +2231,7 @@
                                 <button
                                     type="button"
                                     onClick={() => setShowPasswordFields(!showPasswordFields)}
-                                    className="text-blue-600 hover:text-blue-800 font-medium flex items-center"
+                                    className="text-blue-600 hover:text-blue-800 font-medium flex items-center text-sm"
                                 >
                                     <i className={`fas fa-chevron-${showPasswordFields ? 'up' : 'down'} mr-2`}></i>
                                     {showPasswordFields ? 'Sembunyikan' : 'Ganti Password'}
@@ -2054,7 +2246,7 @@
                                                 name="currentPassword"
                                                 value={formData.currentPassword}
                                                 onChange={handleChange}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                             />
                                         </div>
 
@@ -2066,7 +2258,7 @@
                                                 value={formData.newPassword}
                                                 onChange={handleChange}
                                                 minLength="6"
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                             />
                                             <p className="text-xs text-gray-500 mt-1">Minimal 6 karakter</p>
                                         </div>
@@ -2078,7 +2270,7 @@
                                                 name="confirmPassword"
                                                 value={formData.confirmPassword}
                                                 onChange={handleChange}
-                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                             />
                                         </div>
                                     </div>
@@ -2086,11 +2278,11 @@
                             </div>
 
                             {/* Action Buttons */}
-                            <div className="flex space-x-4 pt-4">
+                            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 pt-4">
                                 <Button
                                     type="submit"
                                     variant="primary"
-                                    className="flex-1 py-3"
+                                    className="flex-1 py-3 text-sm"
                                     disabled={loading}
                                 >
                                     {loading ? (
@@ -2103,7 +2295,7 @@
                                     type="button"
                                     variant="secondary"
                                     onClick={onClose}
-                                    className="px-6"
+                                    className="px-6 text-sm"
                                 >
                                     Batal
                                 </Button>
@@ -2125,10 +2317,10 @@
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" onClick={onClose}>
                     <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-fade-in" onClick={e => e.stopPropagation()}>
                         {/* Header */}
-                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 rounded-t-2xl flex justify-between items-center sticky top-0">
+                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 sm:px-6 py-4 rounded-t-2xl flex justify-between items-center sticky top-0">
                             <div className="flex items-center text-white">
                                 <i className="fas fa-id-card mr-3 text-xl"></i>
-                                <h2 className="text-xl font-bold">Profil Member</h2>
+                                <h2 className="text-lg sm:text-xl font-bold">Profil Member</h2>
                             </div>
                             <button onClick={onClose} className="text-white hover:text-gray-200 transition">
                                 <i className="fas fa-times text-2xl"></i>
@@ -2136,61 +2328,61 @@
                         </div>
                         
                         {/* Content */}
-                        <div className="p-6">
+                        <div className="p-4 sm:p-6">
                             {/* Avatar & Nama */}
                             <div className="flex flex-col items-center mb-6">
                                 <img 
                                     src={member.avatar} 
                                     alt={member.name} 
-                                    className="w-28 h-28 rounded-full border-4 border-blue-100 shadow-lg mb-4 object-cover"
+                                    className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-blue-100 shadow-lg mb-4 object-cover"
                                 />
-                                <h3 className="text-2xl font-bold text-gray-900">{member.name}</h3>
+                                <h3 className="text-xl sm:text-2xl font-bold text-gray-900">{member.name}</h3>
                                 <div className="flex items-center mt-2">
-                                    <span className={`px-4 py-1.5 rounded-full text-sm font-semibold ${
+                                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                                         member.badge === 'Super Admin' ? 'bg-purple-100 text-purple-800' :
                                         member.badge === 'Champion' ? 'bg-yellow-100 text-yellow-800' : 
                                         'bg-blue-100 text-blue-800'
                                     }`}>
                                         {member.badge}
                                     </span>
-                                    <span className="ml-3 text-sm text-gray-600">
+                                    <span className="ml-3 text-xs text-gray-600">
                                         <i className="fas fa-calendar-alt mr-1"></i>Join {member.joinDate}
                                     </span>
                                 </div>
                             </div>
 
                             {/* Informasi Chapter & Hierarchy */}
-                            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-5 rounded-xl mb-6">
-                                <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 sm:p-5 rounded-xl mb-6">
+                                <h4 className="font-semibold text-gray-900 mb-3 flex items-center text-sm sm:text-base">
                                     <i className="fas fa-sitemap mr-2 text-green-600"></i>
                                     Struktur Chapter
                                 </h4>
                                 <div className="space-y-3">
-                                    <div className="flex justify-between items-center py-2 border-b border-green-100">
+                                    <div className="flex justify-between items-center py-2 border-b border-green-100 text-sm">
                                         <span className="text-gray-700 font-medium">Chapter</span>
                                         <span className="font-semibold text-gray-900">{member.chapter}</span>
                                     </div>
-                                    <div className="flex justify-between items-center py-2 border-b border-green-100">
+                                    <div className="flex justify-between items-center py-2 border-b border-green-100 text-sm">
                                         <span className="text-gray-700 font-medium">Level</span>
                                         <span className="font-semibold text-gray-900">{member.level}</span>
                                     </div>
-                                    <div className="flex justify-between items-center py-2 border-b border-green-100">
+                                    <div className="flex justify-between items-center py-2 border-b border-green-100 text-sm">
                                         <span className="text-gray-700 font-medium">Posisi</span>
                                         <span className="font-semibold text-gray-900">{member.position}</span>
                                     </div>
-                                    <div className="flex justify-between items-center py-2 border-b border-green-100">
+                                    <div className="flex justify-between items-center py-2 border-b border-green-100 text-sm">
                                         <span className="text-gray-700 font-medium">Kode Referral</span>
                                         <span className="font-semibold text-blue-600">{member.referralCode}</span>
                                     </div>
                                     
                                     {upline.length > 0 && (
                                         <div className="py-2">
-                                            <span className="text-gray-700 font-medium block mb-2">Atasan:</span>
+                                            <span className="text-gray-700 font-medium block mb-2 text-sm">Atasan:</span>
                                             {upline.map((parent, idx) => (
                                                 <div key={parent.id} className="flex items-center ml-2 mb-1">
                                                     <i className="fas fa-arrow-up text-xs text-green-500 mr-2"></i>
                                                     <img src={parent.avatar} className="w-6 h-6 rounded-full mr-2" />
-                                                    <span className="text-sm">{parent.name} - {parent.position}</span>
+                                                    <span className="text-xs">{parent.name} - {parent.position}</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -2198,12 +2390,12 @@
                                     
                                     {downline.length > 0 && (
                                         <div className="py-2">
-                                            <span className="text-gray-700 font-medium block mb-2">Bawahan Langsung ({downline.length}):</span>
+                                            <span className="text-gray-700 font-medium block mb-2 text-sm">Bawahan Langsung ({downline.length}):</span>
                                             {downline.map(child => (
                                                 <div key={child.id} className="flex items-center ml-2 mb-1">
                                                     <i className="fas fa-arrow-down text-xs text-blue-500 mr-2"></i>
                                                     <img src={child.avatar} className="w-6 h-6 rounded-full mr-2" />
-                                                    <span className="text-sm">{child.name}</span>
+                                                    <span className="text-xs">{child.name}</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -2212,40 +2404,40 @@
                             </div>
 
                             {/* Informasi Bisnis */}
-                            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-xl mb-6">
-                                <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 sm:p-5 rounded-xl mb-6">
+                                <h4 className="font-semibold text-gray-900 mb-3 flex items-center text-sm sm:text-base">
                                     <i className="fas fa-briefcase mr-2 text-blue-600"></i>
                                     Informasi Bisnis
                                 </h4>
                                 <div className="space-y-3">
-                                    <div className="flex justify-between items-center py-2 border-b border-blue-100">
+                                    <div className="flex justify-between items-center py-2 border-b border-blue-100 text-sm">
                                         <span className="text-gray-700 font-medium">Nama Bisnis</span>
                                         <span className="font-semibold text-gray-900">{member.businessName}</span>
                                     </div>
                                     {member.businessDesc && (
                                         <div className="py-2 border-b border-blue-100">
-                                            <span className="text-gray-700 font-medium block mb-1">Deskripsi</span>
-                                            <p className="text-gray-800 bg-white p-3 rounded-lg">{member.businessDesc}</p>
+                                            <span className="text-gray-700 font-medium block mb-1 text-sm">Deskripsi</span>
+                                            <p className="text-gray-800 bg-white p-2 sm:p-3 rounded-lg text-sm">{member.businessDesc}</p>
                                         </div>
                                     )}
                                 </div>
                             </div>
 
                             {/* Kontak & Sosial Media */}
-                            <div className="bg-gray-50 p-5 rounded-xl mb-6">
-                                <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                            <div className="bg-gray-50 p-4 sm:p-5 rounded-xl mb-6">
+                                <h4 className="font-semibold text-gray-900 mb-3 flex items-center text-sm sm:text-base">
                                     <i className="fas fa-address-book mr-2 text-blue-600"></i>
                                     Kontak & Sosial Media
                                 </h4>
                                 <div className="space-y-3">
-                                    <div className="flex items-center py-2 border-b border-gray-200">
+                                    <div className="flex items-center py-2 border-b border-gray-200 text-sm">
                                         <i className="fas fa-envelope text-gray-500 w-6"></i>
                                         <span className="text-gray-700 ml-2">Email:</span>
-                                        <a href={`mailto:${member.email}`} className="ml-auto font-medium text-blue-600 hover:underline">
+                                        <a href={`mailto:${member.email}`} className="ml-auto font-medium text-blue-600 hover:underline truncate max-w-[150px] sm:max-w-none">
                                             {member.email}
                                         </a>
                                     </div>
-                                    <div className="flex items-center py-2 border-b border-gray-200">
+                                    <div className="flex items-center py-2 border-b border-gray-200 text-sm">
                                         <i className="fas fa-phone text-gray-500 w-6"></i>
                                         <span className="text-gray-700 ml-2">No. HP:</span>
                                         <a href={`tel:${member.phone}`} className="ml-auto font-medium text-gray-900">
@@ -2253,19 +2445,19 @@
                                         </a>
                                     </div>
                                     {member.socialLinkedin && (
-                                        <div className="flex items-center py-2 border-b border-gray-200">
+                                        <div className="flex items-center py-2 border-b border-gray-200 text-sm">
                                             <i className="fab fa-linkedin text-blue-700 w-6"></i>
                                             <span className="text-gray-700 ml-2">LinkedIn:</span>
-                                            <a href={member.socialLinkedin} target="_blank" className="ml-auto font-medium text-blue-600 hover:underline truncate">
+                                            <a href={member.socialLinkedin} target="_blank" className="ml-auto font-medium text-blue-600 hover:underline truncate max-w-[150px] sm:max-w-none">
                                                 {member.socialLinkedin.replace('https://', '')}
                                             </a>
                                         </div>
                                     )}
                                     {member.socialInstagram && (
-                                        <div className="flex items-center py-2">
+                                        <div className="flex items-center py-2 text-sm">
                                             <i className="fab fa-instagram text-pink-600 w-6"></i>
                                             <span className="text-gray-700 ml-2">Instagram:</span>
-                                            <a href={member.socialInstagram} target="_blank" className="ml-auto font-medium text-blue-600 hover:underline truncate">
+                                            <a href={member.socialInstagram} target="_blank" className="ml-auto font-medium text-blue-600 hover:underline truncate max-w-[150px] sm:max-w-none">
                                                 {member.socialInstagram.replace('https://', '')}
                                             </a>
                                         </div>
@@ -2274,27 +2466,27 @@
                             </div>
 
                             {/* Statistik KPI */}
-                            <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-5 rounded-xl">
-                                <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                            <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 sm:p-5 rounded-xl">
+                                <h4 className="font-semibold text-gray-900 mb-3 flex items-center text-sm sm:text-base">
                                     <i className="fas fa-chart-line mr-2 text-purple-600"></i>
                                     Statistik KPI
                                 </h4>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-white p-4 rounded-lg text-center">
-                                        <p className="text-sm text-gray-600 mb-1">Total Points</p>
-                                        <p className="text-2xl font-bold text-purple-600">{member.totalPoints || 0}</p>
+                                    <div className="bg-white p-3 sm:p-4 rounded-lg text-center">
+                                        <p className="text-xs text-gray-600 mb-1">Total Points</p>
+                                        <p className="text-xl sm:text-2xl font-bold text-purple-600">{member.totalPoints || 0}</p>
                                     </div>
-                                    <div className="bg-white p-4 rounded-lg text-center">
-                                        <p className="text-sm text-gray-600 mb-1">Rata-rata</p>
-                                        <p className="text-2xl font-bold text-blue-600">{member.weeklyAverage || 0}/week</p>
+                                    <div className="bg-white p-3 sm:p-4 rounded-lg text-center">
+                                        <p className="text-xs text-gray-600 mb-1">Rata-rata</p>
+                                        <p className="text-xl sm:text-2xl font-bold text-blue-600">{member.weeklyAverage || 0}/week</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Footer */}
-                        <div className="bg-gray-50 px-6 py-4 rounded-b-2xl flex justify-end">
-                            <Button variant="secondary" onClick={onClose}>
+                        <div className="bg-gray-50 px-4 sm:px-6 py-4 rounded-b-2xl flex justify-end">
+                            <Button variant="secondary" onClick={onClose} className="text-sm">
                                 <i className="fas fa-times mr-2"></i>Tutup
                             </Button>
                         </div>
@@ -2346,19 +2538,19 @@
             const percentage = Math.round((currentValue / targetValue) * 100);
 
             return (
-                <div className={`rounded-xl p-4 ${kpi.completed ? 'kpi-card-completed' : 'kpi-card-pending'} border ${kpi.completed ? 'border-green-200' : 'border-orange-200'}`}>
+                <div className={`rounded-xl p-3 sm:p-4 ${kpi.completed ? 'kpi-card-completed' : 'kpi-card-pending'} border ${kpi.completed ? 'border-green-200' : 'border-orange-200'}`}>
                     <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${kpi.completed ? 'bg-green-600' : 'bg-orange-500'}`}>
-                                <i className={`${getIcon(kpi.id)} text-white text-lg`}></i>
+                            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${kpi.completed ? 'bg-green-600' : 'bg-orange-500'}`}>
+                                <i className={`${getIcon(kpi.id)} text-white text-sm sm:text-lg`}></i>
                             </div>
-                            <div className="ml-3">
-                                <h3 className="font-semibold text-gray-900">{kpi.name}</h3>
+                            <div className="ml-2 sm:ml-3">
+                                <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{kpi.name}</h3>
                                 <p className="text-xs text-gray-600">Target: {targetValue} {unit}</p>
                             </div>
                         </div>
                         <div className="text-right">
-                            <span className={`text-sm font-bold ${kpi.completed ? 'text-green-600' : 'text-orange-600'}`}>
+                            <span className={`text-xs font-bold ${kpi.completed ? 'text-green-600' : 'text-orange-600'}`}>
                                 {kpi.completed ? '✓ Selesai' : 'Pending'}
                             </span>
                             <p className="text-xs text-gray-500 mt-1">{kpi.points} point</p>
@@ -2367,17 +2559,17 @@
                     
                     <div className="mt-3">
                         <div className="flex justify-between items-center mb-2">
-                            <span className="text-sm text-gray-600">Progress</span>
-                            <span className="text-sm font-medium">
+                            <span className="text-xs text-gray-600">Progress</span>
+                            <span className="text-xs font-medium">
                                 {currentValue} / {targetValue} {unit} ({percentage}%)
                             </span>
                         </div>
                         
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-2 sm:space-x-3">
                             <button
                                 onClick={handleDecrement}
                                 disabled={disabled || currentValue <= 0}
-                                className={`kpi-button w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold
+                                className={`kpi-button w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-lg sm:text-xl font-bold flex-shrink-0
                                     ${disabled || currentValue <= 0 
                                         ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
                                         : 'bg-red-500 text-white hover:bg-red-600'}`}
@@ -2386,7 +2578,7 @@
                             </button>
                             
                             {/* Progress bar */}
-                            <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                            <div className="flex-1 h-2 sm:h-3 bg-gray-200 rounded-full overflow-hidden">
                                 <div 
                                     className={`h-full ${kpi.completed ? 'bg-green-500' : 'bg-orange-500'}`}
                                     style={{ width: `${percentage}%` }}
@@ -2396,7 +2588,7 @@
                             <button
                                 onClick={handleIncrement}
                                 disabled={disabled || currentValue >= targetValue * 2}
-                                className={`kpi-button w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold
+                                className={`kpi-button w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-lg sm:text-xl font-bold flex-shrink-0
                                     ${disabled || currentValue >= targetValue * 2
                                         ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
                                         : 'bg-blue-500 text-white hover:bg-blue-600'}`}
@@ -2441,6 +2633,30 @@
             );
         };
 
+        // ==================== CUTOFF INFO COMPONENT ====================
+        const CutoffInfo = ({ weekInfo }) => {
+            return (
+                <div className="cutoff-info">
+                    <div className="flex items-start">
+                        <i className="fas fa-clock text-purple-600 mt-1 mr-3"></i>
+                        <div>
+                            <p className="font-medium text-gray-800 text-sm">
+                                Periode Cut-off Minggu #{weekInfo.weekNumber}
+                            </p>
+                            <p className="text-xs text-gray-600 mt-1">
+                                <span className="font-semibold">{weekInfo.startFormatted}</span> ({weekInfo.cutoffStart}) - 
+                                <span className="font-semibold"> {weekInfo.endFormatted}</span> ({weekInfo.cutoffEnd})
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                                <i className="fas fa-info-circle mr-1"></i>
+                                KPI dihitung per minggu, reset setiap hari Senin jam 00:00 WIB
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         // ==================== LOGIN PAGE ====================
         const Login = ({ onLogin }) => {
             const [email, setEmail] = React.useState('');
@@ -2475,12 +2691,12 @@
 
             return (
                 <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
-                    <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+                    <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-6 sm:p-8">
                         <div className="text-center mb-8">
-                            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+                            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
                                 Chapter KPI
                             </h1>
-                            <p className="text-gray-600 mt-2">Champion Performance Dashboard</p>
+                            <p className="text-gray-600 mt-2 text-sm">Champion Performance Dashboard</p>
                         </div>
                         
                         <form onSubmit={handleSubmit} className="space-y-6">
@@ -2496,7 +2712,7 @@
                                     type="email" 
                                     value={email} 
                                     onChange={(e) => setEmail(e.target.value)} 
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" 
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" 
                                     placeholder="email@chapter.id" 
                                     required 
                                 />
@@ -2508,13 +2724,13 @@
                                     type="password" 
                                     value={password} 
                                     onChange={(e) => setPassword(e.target.value)} 
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" 
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" 
                                     placeholder="••••••••" 
                                     required 
                                 />
                             </div>
                             
-                            <Button variant="primary" className="w-full py-3">Sign In</Button>
+                            <Button variant="primary" className="w-full py-3 text-sm">Sign In</Button>
                             
                             <p className="text-center text-sm text-gray-600">
                                 Belum punya akun?{' '}
@@ -2526,40 +2742,40 @@
                         <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
                             <p className="text-sm font-medium text-gray-800 mb-3 flex items-center">
                                 <i className="fas fa-robot mr-2 text-blue-600"></i>
-                                🔐 Demo Access - Klik langsung login:
+                                🔐 Demo Access
                             </p>
                             <div className="space-y-2">
                                 <button 
                                     onClick={fillSuperAdmin}
-                                    className="w-full flex items-center justify-between p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition border border-purple-200"
+                                    className="w-full flex items-center justify-between p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition border border-purple-200 text-sm"
                                 >
                                     <div className="flex items-center">
                                         <i className="fas fa-crown text-purple-600 mr-3"></i>
                                         <span className="font-medium">Super Admin</span>
                                     </div>
-                                    <span className="text-sm text-gray-600">superadmin@chapter.id / admin123</span>
+                                    <span className="text-xs text-gray-600">superadmin@chapter.id</span>
                                 </button>
                                 
                                 <button 
                                     onClick={fillDimas}
-                                    className="w-full flex items-center justify-between p-3 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition border border-yellow-200"
+                                    className="w-full flex items-center justify-between p-3 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition border border-yellow-200 text-sm"
                                 >
                                     <div className="flex items-center">
                                         <i className="fas fa-trophy text-yellow-600 mr-3"></i>
-                                        <span className="font-medium">Champion Member</span>
+                                        <span className="font-medium">Champion</span>
                                     </div>
-                                    <span className="text-sm text-gray-600">dimas@chapter.id / dimas123</span>
+                                    <span className="text-xs text-gray-600">dimas@chapter.id</span>
                                 </button>
                                 
                                 <button 
                                     onClick={fillSinta}
-                                    className="w-full flex items-center justify-between p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition border border-blue-200"
+                                    className="w-full flex items-center justify-between p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition border border-blue-200 text-sm"
                                 >
                                     <div className="flex items-center">
                                         <i className="fas fa-user text-blue-600 mr-3"></i>
-                                        <span className="font-medium">Regular Member</span>
+                                        <span className="font-medium">Member</span>
                                     </div>
-                                    <span className="text-sm text-gray-600">sinta@chapter.id / sinta123</span>
+                                    <span className="text-xs text-gray-600">sinta@chapter.id</span>
                                 </button>
                             </div>
                         </div>
@@ -2664,20 +2880,20 @@
 
             return (
                 <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-                    <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8">
+                    <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-6 sm:p-8">
                         <div className="text-center mb-8">
-                            <h1 className="text-2xl font-bold text-gray-900">Registrasi Member Chapter</h1>
-                            <p className="text-gray-600 mt-2">Isi data lengkap untuk bergabung</p>
+                            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Registrasi Member Chapter</h1>
+                            <p className="text-gray-600 mt-2 text-sm">Isi data lengkap untuk bergabung</p>
                         </div>
                         
                         {error && (
-                            <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6 border border-red-200">
+                            <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6 border border-red-200 text-sm">
                                 <i className="fas fa-exclamation-circle mr-2"></i>{error}
                             </div>
                         )}
                         
                         {success && (
-                            <div className="bg-green-50 text-green-700 p-4 rounded-lg mb-6 border border-green-200">
+                            <div className="bg-green-50 text-green-700 p-4 rounded-lg mb-6 border border-green-200 text-sm">
                                 <i className="fas fa-check-circle mr-2"></i>{success}
                                 <div className="mt-3">
                                     <a href="#/login" className="text-green-800 font-medium underline">Kembali ke Login</a>
@@ -2692,7 +2908,7 @@
                                     <img 
                                         src={avatarPreview || `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.name || 'User')}&background=2563eb&color=fff&size=128`} 
                                         alt="Preview" 
-                                        className="w-24 h-24 rounded-full border-4 border-blue-100 object-cover"
+                                        className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-blue-100 object-cover"
                                     />
                                     <div 
                                         className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
@@ -2705,7 +2921,7 @@
                                         )}
                                     </div>
                                 </div>
-                                <p className="text-sm text-gray-500">Klik foto untuk upload (max 2MB)</p>
+                                <p className="text-xs text-gray-500">Klik foto untuk upload (max 2MB)</p>
                                 <input
                                     ref={fileInputRef}
                                     type="file"
@@ -2715,26 +2931,26 @@
                                 />
                             </div>
 
-                            <div className="grid md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap *</label>
                                         <input type="text" name="name" value={formData.name} onChange={handleChange}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                             placeholder="John Doe" required />
                                     </div>
                                     
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Nama Bisnis *</label>
                                         <input type="text" name="businessName" value={formData.businessName} onChange={handleChange}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                             placeholder="PT. Maju Jaya" required />
                                     </div>
                                     
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Deskripsi Bisnis</label>
                                         <textarea name="businessDesc" value={formData.businessDesc} onChange={handleChange}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                             placeholder="Ceritakan tentang bisnis Anda..."
                                             rows="3"></textarea>
                                     </div>
@@ -2742,7 +2958,7 @@
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn URL</label>
                                         <input type="url" name="socialLinkedin" value={formData.socialLinkedin} onChange={handleChange}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                             placeholder="https://linkedin.com/in/username" />
                                     </div>
                                 </div>
@@ -2751,35 +2967,35 @@
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Instagram URL</label>
                                         <input type="url" name="socialInstagram" value={formData.socialInstagram} onChange={handleChange}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                             placeholder="https://instagram.com/username" />
                                     </div>
                                     
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">No. HP *</label>
                                         <input type="tel" name="phone" value={formData.phone} onChange={handleChange}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                             placeholder="+62 812-3456-7890" required />
                                     </div>
                                     
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
                                         <input type="email" name="email" value={formData.email} onChange={handleChange}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                             placeholder="email@example.com" required />
                                     </div>
                                     
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Password *</label>
                                         <input type="password" name="password" value={formData.password} onChange={handleChange}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                             placeholder="Minimal 6 karakter" required />
                                     </div>
                                     
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password *</label>
                                         <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                             placeholder="••••••••" required />
                                     </div>
                                     
@@ -2792,7 +3008,7 @@
                                             name="chapter"
                                             value={formData.chapter}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-sm"
                                             required
                                         >
                                             <option value="">-- Pilih Chapter --</option>
@@ -2810,7 +3026,7 @@
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Kode Referral (Opsional)</label>
                                         <input type="text" name="referralCode" value={formData.referralCode} onChange={handleChange}
-                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                             placeholder="Contoh: DIMA002" />
                                         <p className="text-xs text-gray-500 mt-1">
                                             Masukkan kode referral dari member yang mengajak Anda
@@ -2826,9 +3042,9 @@
                                 </p>
                             </div>
                             
-                            <div className="flex space-x-4">
-                                <Button variant="primary" type="submit" className="flex-1">Daftar Sekarang</Button>
-                                <Button variant="secondary" onClick={() => window.location.hash = '/login'} className="px-6">
+                            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                                <Button variant="primary" type="submit" className="flex-1 text-sm">Daftar Sekarang</Button>
+                                <Button variant="secondary" onClick={() => window.location.hash = '/login'} className="px-6 text-sm">
                                     Batal
                                 </Button>
                             </div>
@@ -2897,12 +3113,12 @@
             return (
                 <div className="max-w-7xl mx-auto px-4 pb-24 pt-4">
                     {/* Header Profile with Avatar Upload */}
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
                         <div className="flex items-center space-x-4">
                             <AvatarUpload currentUser={{...currentUser, avatar}} onAvatarUpdate={handleAvatarUpdate} />
                             <div>
-                                <h1 className="text-2xl font-bold text-gray-900">{currentUser?.name}</h1>
-                                <div className="flex items-center mt-1">
+                                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{currentUser?.name}</h1>
+                                <div className="flex flex-wrap items-center mt-1">
                                     <span className={`text-xs px-3 py-1 rounded-full ${
                                         currentUser?.badge === 'Champion' 
                                             ? 'bg-yellow-100 text-yellow-800' 
@@ -2910,7 +3126,7 @@
                                     }`}>
                                         {currentUser?.badge}
                                     </span>
-                                    <span className="text-sm text-gray-600 ml-3">
+                                    <span className="text-xs sm:text-sm text-gray-600 ml-3">
                                         <i className="fas fa-building mr-1"></i>{currentUser?.businessName}
                                     </span>
                                 </div>
@@ -2920,19 +3136,22 @@
                         <Button 
                             variant="outline" 
                             onClick={() => setShowEditProfile(true)}
-                            className="flex items-center"
+                            className="flex items-center mt-4 sm:mt-0 text-sm"
                         >
                             <i className="fas fa-edit mr-2"></i>
                             Edit Profile
                         </Button>
                     </div>
 
+                    {/* Cutoff Info */}
+                    <CutoffInfo weekInfo={weekInfo} />
+
                     {/* Business Contact Card */}
                     <Card className="mb-6 bg-gradient-to-r from-gray-50 to-white">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <p className="text-xs text-gray-500">Email</p>
-                                <p className="font-medium text-sm">{currentUser?.email}</p>
+                                <p className="font-medium text-sm truncate">{currentUser?.email}</p>
                             </div>
                             <div>
                                 <p className="text-xs text-gray-500">Phone</p>
@@ -2949,7 +3168,7 @@
                             {currentUser?.socialLinkedin && (
                                 <div>
                                     <p className="text-xs text-gray-500">LinkedIn</p>
-                                    <a href={currentUser.socialLinkedin} target="_blank" className="font-medium text-sm text-blue-600 hover:underline">
+                                    <a href={currentUser.socialLinkedin} target="_blank" className="font-medium text-sm text-blue-600 hover:underline truncate block">
                                         <i className="fab fa-linkedin mr-1"></i>Profile
                                     </a>
                                 </div>
@@ -2957,7 +3176,7 @@
                             {currentUser?.socialInstagram && (
                                 <div>
                                     <p className="text-xs text-gray-500">Instagram</p>
-                                    <a href={currentUser.socialInstagram} target="_blank" className="font-medium text-sm text-blue-600 hover:underline">
+                                    <a href={currentUser.socialInstagram} target="_blank" className="font-medium text-sm text-blue-600 hover:underline truncate block">
                                         <i className="fab fa-instagram mr-1"></i>Profile
                                     </a>
                                 </div>
@@ -2966,15 +3185,15 @@
                     </Card>
 
                     {/* Week Info & Rank */}
-                    <div className="flex justify-between items-center mb-6">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
                         <div>
                             <p className="text-sm text-gray-600">
                                 <i className="fas fa-calendar-alt mr-2"></i>Minggu ini: {weekRange}
                             </p>
                             <p className="text-xs text-gray-500 mt-1">Week #{weekInfo.weekNumber}</p>
                         </div>
-                        <div className="bg-yellow-100 px-4 py-2 rounded-full">
-                            <span className="font-semibold text-yellow-800">
+                        <div className="bg-yellow-100 px-4 py-2 rounded-full mt-2 sm:mt-0">
+                            <span className="font-semibold text-yellow-800 text-sm">
                                 <i className="fas fa-trophy mr-1"></i>Rank #{memberRank}
                             </span>
                         </div>
@@ -2983,26 +3202,26 @@
                     {/* Progress Overview */}
                     <div className="grid grid-cols-2 gap-4 mb-6">
                         <Card className="bg-gradient-to-br from-blue-50 to-indigo-50">
-                            <p className="text-sm text-gray-600">Total Points</p>
-                            <p className="text-2xl font-bold text-blue-600">{kpiSummary.totalPoints}</p>
+                            <p className="text-xs text-gray-600">Total Points</p>
+                            <p className="text-xl sm:text-2xl font-bold text-blue-600">{kpiSummary.totalPoints}</p>
                             <p className="text-xs text-gray-500 mt-1">{kpiSummary.totalWeeks} minggu</p>
                         </Card>
                         <Card className="bg-gradient-to-br from-green-50 to-emerald-50">
-                            <p className="text-sm text-gray-600">Rata-rata</p>
-                            <p className="text-2xl font-bold text-green-600">{kpiSummary.avgPoints}/week</p>
+                            <p className="text-xs text-gray-600">Rata-rata</p>
+                            <p className="text-xl sm:text-2xl font-bold text-green-600">{kpiSummary.avgPoints}/week</p>
                         </Card>
                     </div>
 
                     {/* Network Stats */}
                     <div className="grid grid-cols-2 gap-4 mb-6">
                         <Card className="bg-gradient-to-br from-purple-50 to-pink-50">
-                            <p className="text-sm text-gray-600">Bawahan Langsung</p>
-                            <p className="text-2xl font-bold text-purple-600">{downlineCount}</p>
+                            <p className="text-xs text-gray-600">Bawahan Langsung</p>
+                            <p className="text-xl sm:text-2xl font-bold text-purple-600">{downlineCount}</p>
                             <p className="text-xs text-gray-500 mt-1">Total: {totalDownline} orang</p>
                         </Card>
                         <Card className="bg-gradient-to-br from-orange-50 to-red-50">
-                            <p className="text-sm text-gray-600">Level</p>
-                            <p className="text-2xl font-bold text-orange-600">{currentUser?.level}</p>
+                            <p className="text-xs text-gray-600">Level</p>
+                            <p className="text-xl sm:text-2xl font-bold text-orange-600">{currentUser?.level}</p>
                             <p className="text-xs text-gray-500 mt-1">{currentUser?.position}</p>
                         </Card>
                     </div>
@@ -3036,7 +3255,7 @@
                                 KPI Minggu Ini
                             </h2>
                             <div className="bg-blue-100 px-4 py-2 rounded-full">
-                                <span className="font-bold text-blue-800">{weekKPI?.totalPoints}/100 pts</span>
+                                <span className="font-bold text-blue-800 text-sm">{weekKPI?.totalPoints}/100 pts</span>
                             </div>
                         </div>
                         
@@ -3049,23 +3268,23 @@
 
                     {/* Chapter Summary */}
                     <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-100 mb-6">
-                        <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                        <h3 className="font-semibold text-gray-900 mb-4 flex items-center text-sm sm:text-base">
                             <i className="fas fa-users mr-2 text-purple-600"></i>
                             Chapter Summary
                         </h3>
                         <div className="grid grid-cols-3 gap-4 text-center">
                             <div>
-                                <p className="text-2xl font-bold text-purple-600">{allMembersKPI.length}</p>
+                                <p className="text-xl sm:text-2xl font-bold text-purple-600">{allMembersKPI.length}</p>
                                 <p className="text-xs text-gray-600">Total Member</p>
                             </div>
                             <div>
-                                <p className="text-2xl font-bold text-blue-600">
+                                <p className="text-xl sm:text-2xl font-bold text-blue-600">
                                     {allMembersKPI.filter(m => m.currentWeekPercentage >= 80).length}
                                 </p>
                                 <p className="text-xs text-gray-600">On Track</p>
                             </div>
                             <div>
-                                <p className="text-2xl font-bold text-green-600">
+                                <p className="text-xl sm:text-2xl font-bold text-green-600">
                                     {allMembersKPI.filter(m => m.currentWeekPercentage === 100).length}
                                 </p>
                                 <p className="text-xs text-gray-600">100% KPI</p>
@@ -3076,8 +3295,8 @@
                     {/* Leaderboard Preview */}
                     <div>
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="font-semibold text-gray-900">Leaderboard Minggu Ini</h3>
-                            <a href="#/leaderboard" className="text-sm text-blue-600">Lihat Semua →</a>
+                            <h3 className="font-semibold text-gray-900 text-sm sm:text-base">Leaderboard Minggu Ini</h3>
+                            <a href="#/leaderboard" className="text-xs sm:text-sm text-blue-600">Lihat Semua →</a>
                         </div>
                         <div className="space-y-3">
                             {allMembersKPI.slice(0, 3).map((member, idx) => (
@@ -3114,8 +3333,8 @@
                             rank === 3 ? 'bg-gradient-to-r from-orange-50 to-white border-l-4 border-orange-400' : ''
                         }`}
                     >
-                        <div className="flex items-center flex-1">
-                            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mr-3
+                        <div className="flex items-center flex-1 min-w-0">
+                            <span className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-xs font-bold mr-2 sm:mr-3 flex-shrink-0
                                 ${rank === 1 ? 'bg-yellow-400 text-white' : 
                                   rank === 2 ? 'bg-gray-400 text-white' : 
                                   rank === 3 ? 'bg-orange-400 text-white' : 
@@ -3124,19 +3343,19 @@
                             </span>
                             <img 
                                 src={member.avatar} 
-                                className="w-10 h-10 rounded-full mr-3 cursor-pointer hover:opacity-80 transition-opacity object-cover" 
+                                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3 cursor-pointer hover:opacity-80 transition-opacity object-cover flex-shrink-0" 
                                 onClick={() => setShowProfile(true)}
                                 alt={member.name}
                             />
-                            <div className="cursor-pointer" onClick={() => setShowProfile(true)}>
-                                <p className="font-semibold text-gray-900">{member.name}</p>
-                                <p className="text-xs text-gray-600">{member.businessName}</p>
-                                <p className="text-xs text-gray-400">{member.chapter}</p>
+                            <div className="cursor-pointer min-w-0" onClick={() => setShowProfile(true)}>
+                                <p className="font-semibold text-gray-900 text-sm sm:text-base truncate">{member.name}</p>
+                                <p className="text-xs text-gray-600 truncate">{member.businessName}</p>
+                                <p className="text-xs text-gray-400 truncate">{member.chapter}</p>
                             </div>
                         </div>
-                        <div className="text-right">
-                            <p className="text-xl font-bold text-blue-600">{member.currentWeekPoints}</p>
-                            <p className="text-xs text-gray-500">{member.currentWeekPercentage}% KPI</p>
+                        <div className="text-right flex-shrink-0 ml-2">
+                            <p className="text-lg sm:text-xl font-bold text-blue-600">{member.currentWeekPoints}</p>
+                            <p className="text-xs text-gray-500">{member.currentWeekPercentage}%</p>
                         </div>
                     </Card>
 
@@ -3204,22 +3423,22 @@
             return (
                 <div className="max-w-7xl mx-auto px-4 pb-24 pt-4">
                     {/* Header */}
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
                         <div className="flex items-center space-x-4">
                             <AvatarUpload currentUser={{...currentUser, avatar}} onAvatarUpdate={handleAvatarUpdate} />
                             <div>
-                                <h1 className="text-2xl font-bold text-gray-900">Super Admin Dashboard</h1>
-                                <p className="text-sm text-gray-600 mt-1">
-                                    <i className="fas fa-calendar mr-2"></i>Minggu {weekInfo.weekNumber}: {weekRange}
+                                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Super Admin</h1>
+                                <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                                    <i className="fas fa-calendar mr-2"></i>Minggu {weekInfo.weekNumber}
                                 </p>
                                 <p className="text-xs text-gray-500">Klik foto untuk ganti avatar</p>
                             </div>
                         </div>
-                        <div className="flex items-center space-x-3">
+                        <div className="flex flex-wrap items-center gap-2 mt-4 sm:mt-0">
                             <Button 
                                 variant="primary" 
                                 onClick={() => setShowCreateEvent(true)}
-                                className="flex items-center bg-purple-600 hover:bg-purple-700"
+                                className="flex items-center bg-purple-600 hover:bg-purple-700 text-sm"
                             >
                                 <i className="fas fa-calendar-plus mr-2"></i>
                                 Buat Event
@@ -3227,39 +3446,38 @@
                             <Button 
                                 variant="outline" 
                                 onClick={() => setShowEditProfile(true)}
-                                className="flex items-center"
+                                className="flex items-center text-sm"
                             >
                                 <i className="fas fa-edit mr-2"></i>
-                                Edit Profile
+                                Edit
                             </Button>
                             <div className="bg-purple-100 px-4 py-2 rounded-full">
                                 <i className="fas fa-crown text-purple-600 mr-2"></i>
-                                <span className="font-semibold text-purple-800">Super Admin</span>
+                                <span className="font-semibold text-purple-800 text-xs sm:text-sm">Super Admin</span>
                             </div>
                         </div>
                     </div>
 
+                    {/* Cutoff Info */}
+                    <CutoffInfo weekInfo={weekInfo} />
+
                     {/* Chapter Stats */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                         <Card className="bg-gradient-to-br from-blue-50 to-indigo-50">
                             <p className="text-xs text-gray-600">Total Member</p>
-                            <p className="text-2xl font-bold text-blue-600">{chapterSummary.totalMembers}</p>
-                            <p className="text-xs text-gray-500 mt-1">Aktif: {chapterSummary.totalMembers}</p>
+                            <p className="text-xl sm:text-2xl font-bold text-blue-600">{chapterSummary.totalMembers}</p>
                         </Card>
                         <Card className="bg-gradient-to-br from-green-50 to-emerald-50">
                             <p className="text-xs text-gray-600">Total Points</p>
-                            <p className="text-2xl font-bold text-green-600">{chapterSummary.totalPoints}</p>
-                            <p className="text-xs text-gray-500 mt-1">Rata2: {chapterSummary.avgPoints}</p>
+                            <p className="text-xl sm:text-2xl font-bold text-green-600">{chapterSummary.totalPoints}</p>
                         </Card>
                         <Card className="bg-gradient-to-br from-purple-50 to-pink-50">
                             <p className="text-xs text-gray-600">Completion</p>
-                            <p className="text-2xl font-bold text-purple-600">{chapterSummary.completionRate}%</p>
-                            <p className="text-xs text-gray-500 mt-1">{chapterSummary.membersCompleteKPI}/{chapterSummary.membersWithKPI} member</p>
+                            <p className="text-xl sm:text-2xl font-bold text-purple-600">{chapterSummary.completionRate}%</p>
                         </Card>
                         <Card className="bg-gradient-to-br from-orange-50 to-red-50">
                             <p className="text-xs text-gray-600">Total Event</p>
-                            <p className="text-2xl font-bold text-orange-600">{events.length}</p>
-                            <p className="text-xs text-gray-500 mt-1">Aktif: {events.filter(e => new Date(e.date) >= new Date()).length}</p>
+                            <p className="text-xl sm:text-2xl font-bold text-orange-600">{events.length}</p>
                         </Card>
                     </div>
 
@@ -3269,7 +3487,7 @@
                             <i className="fas fa-calendar-alt mr-2 text-purple-600"></i>
                             Daftar Event
                         </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {events.length > 0 ? (
                                 events.sort((a, b) => new Date(a.date) - new Date(b.date)).map(event => (
                                     <EventCard
@@ -3287,7 +3505,7 @@
                                     <p className="text-gray-500">Belum ada event</p>
                                     <button
                                         onClick={() => setShowCreateEvent(true)}
-                                        className="mt-3 text-purple-600 hover:text-purple-800 font-medium"
+                                        className="mt-3 text-purple-600 hover:text-purple-800 font-medium text-sm"
                                     >
                                         <i className="fas fa-plus mr-1"></i>
                                         Buat Event Pertama
@@ -3303,7 +3521,7 @@
                             <i className="fas fa-map-marker-alt mr-2 text-blue-600"></i>
                             Chapter Overview
                         </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {chapters.map(chapter => {
                                 const chapterMembers = allMembersKPI.filter(m => m.chapter === chapter.name);
                                 const avgPoints = chapterMembers.length > 0 
@@ -3313,19 +3531,19 @@
                                 return (
                                     <Card key={chapter.id} className="border-l-4 border-blue-400">
                                         <div className="flex justify-between items-start mb-2">
-                                            <h3 className="font-bold text-gray-900">{chapter.name}</h3>
+                                            <h3 className="font-bold text-gray-900 text-sm sm:text-base">{chapter.name}</h3>
                                             <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
                                                 {chapter.region}
                                             </span>
                                         </div>
                                         <div className="grid grid-cols-2 gap-2 text-sm mb-2">
                                             <div>
-                                                <p className="text-gray-500">Member</p>
-                                                <p className="font-semibold">{chapter.members.length}</p>
+                                                <p className="text-xs text-gray-500">Member</p>
+                                                <p className="font-semibold text-sm">{chapter.members.length}</p>
                                             </div>
                                             <div>
-                                                <p className="text-gray-500">Rata-rata</p>
-                                                <p className="font-semibold">{avgPoints} pts</p>
+                                                <p className="text-xs text-gray-500">Rata-rata</p>
+                                                <p className="font-semibold text-sm">{avgPoints} pts</p>
                                             </div>
                                         </div>
                                         {chapter.leader && (
@@ -3348,16 +3566,16 @@
                         </h2>
                         
                         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                            <div className="overflow-x-auto">
+                            <div className="table-container">
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead className="bg-gray-50">
                                         <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Member</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bisnis</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chapter</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Level</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Week {weekInfo.weekNumber}</th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Member</th>
+                                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bisnis</th>
+                                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chapter</th>
+                                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Level</th>
+                                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Week {weekInfo.weekNumber}</th>
+                                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
@@ -3366,41 +3584,41 @@
                                             return (
                                                 <React.Fragment key={member.id}>
                                                     <tr className="hover:bg-gray-50">
-                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                                                             <div className="flex items-center">
                                                                 <img 
                                                                     src={member.avatar} 
-                                                                    className="w-8 h-8 rounded-full mr-3 cursor-pointer hover:opacity-80 object-cover" 
+                                                                    className="w-6 h-6 sm:w-8 sm:h-8 rounded-full mr-2 sm:mr-3 cursor-pointer hover:opacity-80 object-cover" 
                                                                     onClick={() => setShowMemberProfile(true)}
                                                                     alt={member.name}
                                                                 />
                                                                 <div>
-                                                                    <p className="font-medium text-gray-900">{member.name}</p>
+                                                                    <p className="font-medium text-gray-900 text-sm">{member.name}</p>
                                                                     <p className="text-xs text-gray-500">{member.badge}</p>
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                                                             <p className="text-sm text-gray-900">{member.businessName}</p>
                                                         </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                                                             <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
                                                                 {member.chapter}
                                                             </span>
                                                         </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap">
-                                                            <p className="text-sm">Level {member.level} - {member.position}</p>
+                                                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                                            <p className="text-sm">Level {member.level}</p>
                                                         </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap">
+                                                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                                                             <div className="flex items-center">
-                                                                <span className="font-bold text-blue-600 mr-2">{member.currentWeekPoints}</span>
-                                                                <div className="w-16 bg-gray-200 rounded-full h-2">
+                                                                <span className="font-bold text-blue-600 mr-2 text-sm">{member.currentWeekPoints}</span>
+                                                                <div className="w-12 sm:w-16 bg-gray-200 rounded-full h-2">
                                                                     <div className="bg-blue-600 rounded-full h-2" style={{ width: `${member.currentWeekPercentage}%` }}></div>
                                                                 </div>
                                                             </div>
                                                         </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap">
-                                                            <span className="font-medium text-gray-900">{member.totalPoints || 0}</span>
+                                                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                                            <span className="font-medium text-gray-900 text-sm">{member.totalPoints || 0}</span>
                                                         </td>
                                                     </tr>
                                                     <MemberProfileModal 
@@ -3467,14 +3685,14 @@
 
             return (
                 <div className="max-w-7xl mx-auto px-4 pb-24 pt-6">
-                    <h1 className="text-2xl font-bold text-gray-900 mb-2">Events</h1>
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Events</h1>
                     <p className="text-sm text-gray-600 mb-6">Daftar event chapter</p>
 
                     {/* Filter Buttons */}
-                    <div className="flex space-x-2 mb-6">
+                    <div className="flex flex-wrap gap-2 mb-6">
                         <button
                             onClick={() => setFilter('upcoming')}
-                            className={`px-4 py-2 rounded-lg font-medium transition ${
+                            className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
                                 filter === 'upcoming'
                                     ? 'bg-purple-600 text-white'
                                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -3485,7 +3703,7 @@
                         </button>
                         <button
                             onClick={() => setFilter('past')}
-                            className={`px-4 py-2 rounded-lg font-medium transition ${
+                            className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
                                 filter === 'past'
                                     ? 'bg-purple-600 text-white'
                                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -3496,7 +3714,7 @@
                         </button>
                         <button
                             onClick={() => setFilter('all')}
-                            className={`px-4 py-2 rounded-lg font-medium transition ${
+                            className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
                                 filter === 'all'
                                     ? 'bg-purple-600 text-white'
                                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -3554,8 +3772,8 @@
 
             return (
                 <div className="max-w-7xl mx-auto px-4 pb-24 pt-6">
-                    <div className="flex justify-between items-center mb-6">
-                        <h1 className="text-2xl font-bold text-gray-900">Notifikasi</h1>
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-0">Notifikasi</h1>
                         {notifications.some(n => !n.isRead) && (
                             <button
                                 onClick={handleMarkAllAsRead}
@@ -3577,27 +3795,27 @@
                                     }`}
                                 >
                                     <div className="flex items-start">
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
+                                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mr-3 flex-shrink-0 ${
                                             notification.type === 'event' 
                                                 ? 'bg-purple-100 text-purple-600'
                                                 : 'bg-blue-100 text-blue-600'
                                         }`}>
                                             <i className={`fas ${
                                                 notification.type === 'event' ? 'fa-calendar' : 'fa-bell'
-                                            }`}></i>
+                                            } text-sm sm:text-base`}></i>
                                         </div>
-                                        <div className="flex-1">
+                                        <div className="flex-1 min-w-0">
                                             <div className="flex justify-between items-start">
                                                 <div>
-                                                    <p className="font-semibold text-gray-900">
+                                                    <p className="font-semibold text-gray-900 text-sm sm:text-base">
                                                         {notification.title}
                                                     </p>
-                                                    <p className="text-sm text-gray-600 mt-1">
+                                                    <p className="text-xs sm:text-sm text-gray-600 mt-1">
                                                         {notification.message}
                                                     </p>
                                                 </div>
                                                 {!notification.isRead && (
-                                                    <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+                                                    <span className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0"></span>
                                                 )}
                                             </div>
                                             <p className="text-xs text-gray-400 mt-2">
@@ -3642,12 +3860,15 @@
 
             return (
                 <div className="max-w-7xl mx-auto px-4 pb-24 pt-6">
-                    <h1 className="text-2xl font-bold text-gray-900 mb-2">Leaderboard</h1>
-                    <p className="text-sm text-gray-600 mb-4">Minggu {weekInfo.weekNumber} • {weekInfo.monday.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} - {weekInfo.sunday.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Leaderboard</h1>
+                    <p className="text-sm text-gray-600 mb-4">Minggu {weekInfo.weekNumber} • {weekInfo.startFormatted} - {weekInfo.endFormatted}</p>
+                    
+                    {/* Cutoff Info */}
+                    <CutoffInfo weekInfo={weekInfo} />
                     
                     {/* Filter Section */}
                     <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
-                        <div className="flex flex-col md:flex-row gap-4">
+                        <div className="flex flex-col lg:flex-row gap-4">
                             <div className="flex-1">
                                 <div className="relative">
                                     <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -3656,15 +3877,15 @@
                                         placeholder="Cari member atau bisnis..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                                     />
                                 </div>
                             </div>
                             
-                            <div className="flex gap-2">
+                            <div className="flex flex-wrap gap-2">
                                 <button
                                     onClick={() => setFilterBy('all')}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                                    className={`px-3 py-2 rounded-lg font-medium transition-colors text-sm ${
                                         filterBy === 'all' 
                                             ? 'bg-blue-600 text-white' 
                                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -3674,7 +3895,7 @@
                                 </button>
                                 <button
                                     onClick={() => setFilterBy('champion')}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                                    className={`px-3 py-2 rounded-lg font-medium transition-colors text-sm ${
                                         filterBy === 'champion' 
                                             ? 'bg-yellow-500 text-white' 
                                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -3684,7 +3905,7 @@
                                 </button>
                                 <button
                                     onClick={() => setFilterBy('member')}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                                    className={`px-3 py-2 rounded-lg font-medium transition-colors text-sm ${
                                         filterBy === 'member' 
                                             ? 'bg-blue-500 text-white' 
                                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -3694,11 +3915,11 @@
                                 </button>
                             </div>
 
-                            <div className="md:min-w-[200px]">
+                            <div className="lg:min-w-[200px]">
                                 <select
                                     value={chapterFilter}
                                     onChange={(e) => setChapterFilter(e.target.value)}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white text-sm"
                                 >
                                     <option value="all">Semua Chapter</option>
                                     {chapters.map(chapter => (
@@ -3710,7 +3931,7 @@
                             </div>
                         </div>
                         
-                        <div className="mt-3 text-sm text-gray-600">
+                        <div className="mt-3 text-xs text-gray-600">
                             Menampilkan {filteredMembers.length} dari {allMembersKPI.length} member
                         </div>
                     </div>
@@ -3731,7 +3952,7 @@
                                     <p className="text-gray-500">Tidak ada member yang ditemukan</p>
                                     <button 
                                         onClick={() => {setSearchTerm(''); setFilterBy('all'); setChapterFilter('all');}}
-                                        className="mt-3 text-blue-600 hover:underline"
+                                        className="mt-3 text-blue-600 hover:underline text-sm"
                                     >
                                         Reset filter
                                     </button>
@@ -3769,12 +3990,12 @@
 
             return (
                 <div className="max-w-7xl mx-auto px-4 pb-24 pt-6">
-                    <div className="flex justify-between items-center mb-6">
-                        <h1 className="text-2xl font-bold text-gray-900">Profile Saya</h1>
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-0">Profile Saya</h1>
                         <Button 
                             variant="outline" 
                             onClick={() => setShowEditProfile(true)}
-                            className="flex items-center"
+                            className="flex items-center text-sm"
                         >
                             <i className="fas fa-edit mr-2"></i>
                             Edit Profile
@@ -3788,26 +4009,26 @@
                                 <p className="text-xs text-gray-500 text-center mt-2">Klik foto untuk ganti</p>
                             </div>
                             <div className="flex-1">
-                                <h2 className="text-2xl font-bold text-gray-900">{currentUser?.name}</h2>
-                                <p className={`font-medium mt-1 ${
+                                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{currentUser?.name}</h2>
+                                <p className={`font-medium mt-1 text-sm ${
                                     currentUser?.badge === 'Super Admin' ? 'text-purple-600' :
                                     currentUser?.badge === 'Champion' ? 'text-yellow-600' : 'text-blue-600'
                                 }`}>
                                     {currentUser?.badge}
                                 </p>
-                                <p className="text-gray-600 mt-2">{currentUser?.businessName}</p>
-                                <div className="flex items-center mt-2 space-x-4">
-                                    <span className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+                                <p className="text-gray-600 mt-2 text-sm">{currentUser?.businessName}</p>
+                                <div className="flex flex-wrap items-center mt-2 gap-2">
+                                    <span className="text-xs bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
                                         <i className="fas fa-map-marker-alt mr-1"></i>{currentUser?.chapter}
                                     </span>
-                                    <span className="text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full">
+                                    <span className="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full">
                                         <i className="fas fa-code mr-1"></i>{currentUser?.referralCode}
                                     </span>
                                 </div>
                             </div>
                             <div className="mt-4 md:mt-0">
-                                <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium">
-                                    <i className="fas fa-check-circle mr-2"></i>Verified Member
+                                <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-xs font-medium">
+                                    <i className="fas fa-check-circle mr-2"></i>Verified
                                 </span>
                             </div>
                         </div>
@@ -3816,20 +4037,20 @@
                     {/* My Events */}
                     {myEvents.length > 0 && (
                         <Card className="mb-6">
-                            <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                            <h3 className="font-semibold text-gray-900 mb-4 flex items-center text-sm sm:text-base">
                                 <i className="fas fa-calendar-check mr-2 text-purple-600"></i>
                                 Event yang Saya Ikuti ({myEvents.length})
                             </h3>
                             <div className="space-y-3">
                                 {myEvents.map(event => (
                                     <div key={event.id} className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                                        <div>
-                                            <p className="font-medium text-gray-900">{event.title}</p>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="font-medium text-gray-900 text-sm truncate">{event.title}</p>
                                             <p className="text-xs text-gray-600">
                                                 {event.date} • {event.time}
                                             </p>
                                         </div>
-                                        <span className={`text-xs px-2 py-1 rounded-full ${
+                                        <span className={`text-xs px-2 py-1 rounded-full ml-2 flex-shrink-0 ${
                                             event.method === 'online' 
                                                 ? 'bg-blue-100 text-blue-800' 
                                                 : 'bg-green-100 text-green-800'
@@ -3844,41 +4065,41 @@
 
                     {/* Network Info */}
                     <Card className="mb-6">
-                        <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                        <h3 className="font-semibold text-gray-900 mb-4 flex items-center text-sm sm:text-base">
                             <i className="fas fa-sitemap mr-2 text-blue-600"></i>
                             Jaringan Saya
                         </h3>
-                        <div className="grid md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <p className="text-sm text-gray-600 mb-2">Atasan:</p>
+                                <p className="text-xs text-gray-600 mb-2">Atasan:</p>
                                 {upline.length > 0 ? (
                                     upline.map(parent => (
                                         <div key={parent.id} className="flex items-center p-2 bg-gray-50 rounded-lg mb-2">
-                                            <img src={parent.avatar} className="w-8 h-8 rounded-full mr-2" />
-                                            <div>
-                                                <p className="font-medium">{parent.name}</p>
-                                                <p className="text-xs text-gray-500">{parent.position} - {parent.chapter}</p>
+                                            <img src={parent.avatar} className="w-6 h-6 sm:w-8 sm:h-8 rounded-full mr-2" />
+                                            <div className="min-w-0">
+                                                <p className="font-medium text-sm truncate">{parent.name}</p>
+                                                <p className="text-xs text-gray-500 truncate">{parent.position}</p>
                                             </div>
                                         </div>
                                     ))
                                 ) : (
-                                    <p className="text-gray-500">Tidak ada atasan (Top Level)</p>
+                                    <p className="text-gray-500 text-sm">Tidak ada atasan (Top Level)</p>
                                 )}
                             </div>
                             <div>
-                                <p className="text-sm text-gray-600 mb-2">Bawahan Langsung ({downline.length}):</p>
+                                <p className="text-xs text-gray-600 mb-2">Bawahan Langsung ({downline.length}):</p>
                                 {downline.length > 0 ? (
                                     downline.map(child => (
                                         <div key={child.id} className="flex items-center p-2 bg-gray-50 rounded-lg mb-2">
-                                            <img src={child.avatar} className="w-8 h-8 rounded-full mr-2" />
-                                            <div>
-                                                <p className="font-medium">{child.name}</p>
+                                            <img src={child.avatar} className="w-6 h-6 sm:w-8 sm:h-8 rounded-full mr-2" />
+                                            <div className="min-w-0">
+                                                <p className="font-medium text-sm truncate">{child.name}</p>
                                                 <p className="text-xs text-gray-500">Level {child.level}</p>
                                             </div>
                                         </div>
                                     ))
                                 ) : (
-                                    <p className="text-gray-500">Belum memiliki bawahan</p>
+                                    <p className="text-gray-500 text-sm">Belum memiliki bawahan</p>
                                 )}
                                 {totalDownline > downline.length && (
                                     <p className="text-xs text-gray-500 mt-2">Total dalam jaringan: {totalDownline} orang</p>
@@ -3887,30 +4108,30 @@
                         </div>
                     </Card>
 
-                    <div className="grid md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <Card>
-                            <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                            <h3 className="font-semibold text-gray-900 mb-4 flex items-center text-sm sm:text-base">
                                 <i className="fas fa-address-card mr-2 text-blue-600"></i>
                                 Informasi Pribadi
                             </h3>
                             <div className="space-y-3">
-                                <div className="flex justify-between py-2 border-b">
-                                    <span className="text-gray-600">Nama Lengkap</span>
-                                    <span className="font-medium">{currentUser?.name}</span>
+                                <div className="flex justify-between py-2 border-b text-sm">
+                                    <span className="text-gray-600">Nama</span>
+                                    <span className="font-medium truncate ml-2">{currentUser?.name}</span>
                                 </div>
-                                <div className="flex justify-between py-2 border-b">
+                                <div className="flex justify-between py-2 border-b text-sm">
                                     <span className="text-gray-600">Email</span>
-                                    <span className="font-medium">{currentUser?.email}</span>
+                                    <span className="font-medium truncate ml-2">{currentUser?.email}</span>
                                 </div>
-                                <div className="flex justify-between py-2 border-b">
+                                <div className="flex justify-between py-2 border-b text-sm">
                                     <span className="text-gray-600">No. HP</span>
                                     <span className="font-medium">{currentUser?.phone}</span>
                                 </div>
-                                <div className="flex justify-between py-2 border-b">
+                                <div className="flex justify-between py-2 border-b text-sm">
                                     <span className="text-gray-600">Bergabung</span>
                                     <span className="font-medium">{currentUser?.joinDate}</span>
                                 </div>
-                                <div className="flex justify-between py-2">
+                                <div className="flex justify-between py-2 text-sm">
                                     <span className="text-gray-600">Chapter</span>
                                     <span className="font-medium">{currentUser?.chapter}</span>
                                 </div>
@@ -3918,33 +4139,33 @@
                         </Card>
 
                         <Card>
-                            <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                            <h3 className="font-semibold text-gray-900 mb-4 flex items-center text-sm sm:text-base">
                                 <i className="fas fa-briefcase mr-2 text-blue-600"></i>
                                 Informasi Bisnis
                             </h3>
                             <div className="space-y-3">
-                                <div className="flex justify-between py-2 border-b">
+                                <div className="flex justify-between py-2 border-b text-sm">
                                     <span className="text-gray-600">Nama Bisnis</span>
-                                    <span className="font-medium">{currentUser?.businessName}</span>
+                                    <span className="font-medium truncate ml-2">{currentUser?.businessName}</span>
                                 </div>
                                 {currentUser?.businessDesc && (
                                     <div className="py-2 border-b">
-                                        <span className="text-gray-600 block mb-1">Deskripsi</span>
-                                        <p className="text-gray-800 bg-gray-50 p-2 rounded">{currentUser.businessDesc}</p>
+                                        <span className="text-gray-600 block mb-1 text-sm">Deskripsi</span>
+                                        <p className="text-gray-800 bg-gray-50 p-2 rounded text-sm">{currentUser.businessDesc}</p>
                                     </div>
                                 )}
-                                <div className="flex justify-between py-2 border-b">
+                                <div className="flex justify-between py-2 border-b text-sm">
                                     <span className="text-gray-600">LinkedIn</span>
                                     {currentUser?.socialLinkedin ? (
-                                        <a href={currentUser.socialLinkedin} target="_blank" className="font-medium text-blue-600 hover:underline">
+                                        <a href={currentUser.socialLinkedin} target="_blank" className="font-medium text-blue-600 hover:underline truncate ml-2">
                                             <i className="fab fa-linkedin mr-1"></i>Profile
                                         </a>
                                     ) : <span className="text-gray-400">-</span>}
                                 </div>
-                                <div className="flex justify-between py-2">
+                                <div className="flex justify-between py-2 text-sm">
                                     <span className="text-gray-600">Instagram</span>
                                     {currentUser?.socialInstagram ? (
-                                        <a href={currentUser.socialInstagram} target="_blank" className="font-medium text-blue-600 hover:underline">
+                                        <a href={currentUser.socialInstagram} target="_blank" className="font-medium text-blue-600 hover:underline truncate ml-2">
                                             <i className="fab fa-instagram mr-1"></i>Profile
                                         </a>
                                     ) : <span className="text-gray-400">-</span>}
@@ -3961,6 +4182,27 @@
                         onUpdate={handleProfileUpdate}
                     />
                 </div>
+            );
+        };
+
+        // ==================== FOOTER COMPONENT ====================
+        const Footer = () => {
+            return (
+                <footer className="footer py-6 px-4 text-center">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="prima-logo mb-2">
+                            <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">PRIMA+</span>
+                            <span className="text-xs text-gray-400 mx-1">•</span>
+                            <span className="text-xs text-gray-500">COURSE</span>
+                        </div>
+                        <p className="text-xs text-gray-400">
+                            created by PRIMA+ COURSE © 2026
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                            People Resource • Innovation & Mastery
+                        </p>
+                    </div>
+                </footer>
             );
         };
 
@@ -4011,11 +4253,11 @@
                             <img
                                 src={currentUser?.avatar}
                                 alt={currentUser?.name}
-                                className="w-16 h-16 rounded-full border-4 border-blue-100 object-cover"
+                                className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-4 border-blue-100 object-cover"
                             />
-                            <div>
-                                <h3 className="font-bold text-gray-900">{currentUser?.name}</h3>
-                                <p className="text-sm text-gray-600">{currentUser?.businessName}</p>
+                            <div className="min-w-0">
+                                <h3 className="font-bold text-gray-900 text-sm sm:text-base truncate">{currentUser?.name}</h3>
+                                <p className="text-xs text-gray-600 truncate">{currentUser?.businessName}</p>
                                 <div className="flex items-center mt-1">
                                     <span className={`text-xs px-2 py-1 rounded-full ${
                                         currentUser?.badge === 'Champion' 
@@ -4024,7 +4266,7 @@
                                     }`}>
                                         {currentUser?.badge}
                                     </span>
-                                    <span className="text-xs text-gray-500 ml-2">
+                                    <span className="text-xs text-gray-500 ml-2 truncate">
                                         {currentUser?.chapter}
                                     </span>
                                 </div>
@@ -4037,7 +4279,7 @@
                                 <button
                                     key={item.id}
                                     onClick={() => handleItemClick(item.href)}
-                                    className={`w-full flex items-center space-x-4 p-4 rounded-xl transition-all ${
+                                    className={`w-full flex items-center space-x-4 p-4 rounded-xl transition-all text-sm ${
                                         active === item.id
                                             ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
                                             : 'text-gray-700 hover:bg-gray-100'
@@ -4052,21 +4294,11 @@
                             ))}
                         </div>
 
-                        {/* Additional Info - UBAH COPYRIGHT DI SINI */}
+                        {/* Additional Info */}
                         <div className="mt-8">
                             <div className="bg-gray-50 rounded-xl p-4 text-center">
                                 <p className="text-xs text-gray-500 mb-2">Kode Referral</p>
-                                <p className="font-mono font-bold text-blue-600">{currentUser?.referralCode}</p>
-                            </div>
-                            <div className="text-center mt-4">
-                                <div className="prima-logo">
-                                    <span className="text-sm font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">PRIMA+</span>
-                                    <span className="text-xs text-gray-400 mx-1">•</span>
-                                    <span className="text-xs text-gray-500">COURSE</span>
-                                </div>
-                                <p className="text-xs text-gray-400 mt-1">
-                                    created by PRIMA+ COURSE © 2026
-                                </p>
+                                <p className="font-mono font-bold text-blue-600 text-sm">{currentUser?.referralCode}</p>
                             </div>
                         </div>
                     </div>
@@ -4083,33 +4315,33 @@
                 <>
                     <nav className="bg-white shadow-sm sticky top-0 z-40 px-4 py-3">
                         <div className="flex justify-between items-center max-w-7xl mx-auto">
-                            <div className="flex items-center">
-                                <h1 className="text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+                            <div className="flex items-center min-w-0">
+                                <h1 className="text-base sm:text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent truncate">
                                     KPI Monitoring
                                 </h1>
                                 {currentUser?.role === 'super_admin' && (
-                                    <span className="ml-3 bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full hidden sm:inline-block">
+                                    <span className="ml-2 sm:ml-3 bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full hidden sm:inline-block">
                                         <i className="fas fa-crown mr-1"></i>Super Admin
                                     </span>
                                 )}
                                 {currentUser?.role === 'member' && currentUser?.badge === 'Champion' && (
-                                    <span className="ml-3 bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full hidden sm:inline-block">
+                                    <span className="ml-2 sm:ml-3 bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full hidden sm:inline-block">
                                         <i className="fas fa-crown mr-1"></i>Champion
                                     </span>
                                 )}
                             </div>
-                            <div className="flex items-center space-x-2 sm:space-x-4">
+                            <div className="flex items-center space-x-1 sm:space-x-4">
                                 <NotificationBell currentUser={currentUser} />
                                 {/* HAMBURGER MENU BUTTON */}
                                 <button
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                    className="menu-toggle-button w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg flex items-center justify-center hover:shadow-xl transition-all"
+                                    className="menu-toggle-button w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg flex items-center justify-center hover:shadow-xl transition-all"
                                 >
-                                    <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'} text-xl transition-transform`}></i>
+                                    <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'} text-sm sm:text-xl transition-transform`}></i>
                                 </button>
-                                <span className="text-sm text-gray-700 hidden md:block">{currentUser?.name}</span>
-                                <button onClick={onLogout} className="text-gray-500 hover:text-gray-700 p-2">
-                                    <i className="fas fa-sign-out-alt text-lg"></i>
+                                <span className="text-xs sm:text-sm text-gray-700 hidden md:block">{currentUser?.name}</span>
+                                <button onClick={onLogout} className="text-gray-500 hover:text-gray-700 p-1 sm:p-2">
+                                    <i className="fas fa-sign-out-alt text-sm sm:text-lg"></i>
                                 </button>
                             </div>
                         </div>
@@ -4199,7 +4431,12 @@
                 return (
                     <>
                         <Navigation currentUser={currentUser} onLogout={handleLogout} />
-                        <main className="pb-6">{page}</main>
+                        <main className="min-h-screen flex flex-col">
+                            <div className="flex-1">
+                                {page}
+                            </div>
+                            <Footer />
+                        </main>
                     </>
                 );
             }
