@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Chapter KPI • Champion</title>
+    <title>Power 10 • Chapter KPI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
@@ -150,6 +150,8 @@
         }
 
         /* KPI Card Styles */
+        .kpi-card-offline { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); }
+        .kpi-card-online { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); }
         .kpi-card-completed { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); }
         .kpi-card-pending { background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); }
         
@@ -312,14 +314,6 @@
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         }
         
-        /* Menu Toggle */
-        .menu-toggle-button {
-            transition: all 0.3s;
-        }
-        .menu-toggle-button:hover {
-            transform: scale(1.1);
-        }
-        
         /* PRIMA+ Logo */
         .prima-logo {
             font-family: 'Arial Black', sans-serif;
@@ -414,6 +408,21 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        /* Power 10 Section */
+        .power-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .power-section-title.offline {
+            color: #0369a1;
+        }
+        .power-section-title.online {
+            color: #6b21a8;
+        }
     </style>
 </head>
 <body>
@@ -421,7 +430,8 @@
 
     <script type="text/babel">
         // -------------------------------------------------------------------
-        // CHAPTER KPI TRACKER - WITH BOTTOM NAVIGATION
+        // POWER 10 - CHAPTER KPI TRACKER
+        // Sistem Networking dengan 5 Aktivitas Offline + 5 Aktivitas Online
         // -------------------------------------------------------------------
         
         // === CLEAR ALL OLD DATA - FRESH START ===
@@ -731,126 +741,83 @@
 
         const weekInfo = getWeekRange();
         
+        // ============= POWER 10 KPI DATA =============
+        // Format KPI dengan 10 aktivitas: 5 OFFLINE + 5 ONLINE
+        const power10Offline = [
+            { id: 'hadir', name: 'Hadir', desc: 'Hadir dalam pertemuan event', target: '1 event', targetCount: 1, points: 10, icon: 'fa-calendar-check', category: 'offline' },
+            { id: 'temu', name: 'Temu', desc: 'Temu 4 mata / 1 on 1 meeting', target: '1 temu', targetCount: 1, points: 10, icon: 'fa-handshake', category: 'offline' },
+            { id: 'asah', name: 'Asah', desc: 'Asah diri dengan belajar', target: '1 jam', targetHours: 1, points: 10, icon: 'fa-graduation-cap', category: 'offline' },
+            { id: 'bagi', name: 'Bagi', desc: 'Bagi rujukan / referral', target: '1 rujukan', targetCount: 1, points: 10, icon: 'fa-share-alt', category: 'offline' },
+            { id: 'ajak', name: 'Ajak', desc: 'Ajak tamu/visitor', target: '1 tamu', targetCount: 1, points: 10, icon: 'fa-user-plus', category: 'offline' }
+        ];
+
+        const power10Online = [
+            { id: 'siar', name: 'Siar', desc: 'Siar postingan di media sosial', target: '1 postingan', targetCount: 1, points: 10, icon: 'fa-bullhorn', category: 'online' },
+            { id: 'sahut', name: 'Sahut', desc: 'Sahut komentar (engage dengan postingan orang)', target: '3 komentar', targetCount: 3, points: 10, icon: 'fa-comment', category: 'online' },
+            { id: 'jaring', name: 'Jaring', desc: 'Jaring komunitas baru (connect/berteman)', target: '2 koneksi', targetCount: 2, points: 10, icon: 'fa-users', category: 'online' },
+            { id: 'sapa', name: 'Sapa', desc: 'Sapa lewat pesan (DM/chat)', target: '2 pesan', targetCount: 2, points: 10, icon: 'fa-envelope', category: 'online' },
+            { id: 'dorong', name: 'Dorong', desc: 'Dorong skill komunikasi (video call/live)', target: '1 sesi', targetCount: 1, points: 10, icon: 'fa-video', category: 'online' }
+        ];
+
+        const allPower10KPIs = [...power10Offline, ...power10Online];
+
+        // Generate KPI data untuk setiap member
+        const generateKPIForUser = (userId, completedCount = null) => {
+            const kpiItems = allPower10KPIs.map(kpi => {
+                // Random completion status untuk demo
+                let completed = false;
+                if (completedCount !== null) {
+                    // Untuk user tertentu, set jumlah completed tertentu
+                    const kpiIndex = allPower10KPIs.findIndex(k => k.id === kpi.id);
+                    completed = kpiIndex < completedCount;
+                } else {
+                    // Random berdasarkan userId
+                    const randomSeed = (userId * 7 + allPower10KPIs.findIndex(k => k.id === kpi.id)) % 10;
+                    completed = randomSeed < 5; // 50% chance completed
+                }
+
+                return {
+                    id: kpi.id,
+                    name: kpi.name,
+                    desc: kpi.desc,
+                    category: kpi.category,
+                    target: kpi.target,
+                    targetHours: kpi.targetHours || null,
+                    targetCount: kpi.targetCount || null,
+                    achievedHours: kpi.targetHours ? (completed ? kpi.targetHours : Math.random() * kpi.targetHours) : null,
+                    achievedCount: kpi.targetCount ? (completed ? kpi.targetCount : Math.floor(Math.random() * kpi.targetCount)) : null,
+                    points: kpi.points,
+                    completed: completed,
+                    icon: kpi.icon
+                };
+            });
+
+            const totalPoints = kpiItems.reduce((sum, k) => sum + (k.completed ? k.points : 0), 0);
+            const maxPoints = 100; // 10 x 10 points
+
+            return {
+                id: userId,
+                userId: userId,
+                weekStart: weekInfo.start,
+                weekNumber: weekInfo.weekNumber,
+                year: new Date().getFullYear(),
+                kpi: kpiItems,
+                totalPoints: totalPoints,
+                maxPoints: maxPoints,
+                percentage: Math.round((totalPoints / maxPoints) * 100),
+                offlinePoints: kpiItems.filter(k => k.category === 'offline' && k.completed).reduce((sum, k) => sum + k.points, 0),
+                onlinePoints: kpiItems.filter(k => k.category === 'online' && k.completed).reduce((sum, k) => sum + k.points, 0)
+            };
+        };
+
         const kpiData = [
-            {
-                id: 1,
-                userId: 2,
-                weekStart: weekInfo.start,
-                weekNumber: weekInfo.weekNumber,
-                year: new Date().getFullYear(),
-                kpi: [
-                    { id: 'meeting', name: 'Join Meeting', target: '1 jam', targetHours: 1, achievedHours: 1, points: 20, completed: true },
-                    { id: 'ononone', name: '1 on 1 Meeting', target: '1 jam', targetHours: 1, achievedHours: 1.5, points: 20, completed: true },
-                    { id: 'visitor', name: 'Bawa Visitor', target: '1 org', targetCount: 1, achievedCount: 2, points: 20, completed: true },
-                    { id: 'learning', name: 'Belajar (BB)', target: '1 jam', targetHours: 1, achievedHours: 1, points: 20, completed: true },
-                    { id: 'referral', name: 'Referral', target: '1 org', targetCount: 1, achievedCount: 1, points: 20, completed: true }
-                ],
-                totalPoints: 100,
-                maxPoints: 100,
-                percentage: 100
-            },
-            {
-                id: 2,
-                userId: 3,
-                weekStart: weekInfo.start,
-                weekNumber: weekInfo.weekNumber,
-                year: new Date().getFullYear(),
-                kpi: [
-                    { id: 'meeting', name: 'Join Meeting', target: '1 jam', targetHours: 1, achievedHours: 1, points: 20, completed: true },
-                    { id: 'ononone', name: '1 on 1 Meeting', target: '1 jam', targetHours: 1, achievedHours: 1, points: 20, completed: true },
-                    { id: 'visitor', name: 'Bawa Visitor', target: '1 org', targetCount: 1, achievedCount: 0, points: 20, completed: false },
-                    { id: 'learning', name: 'Belajar (BB)', target: '1 jam', targetHours: 1, achievedHours: 2, points: 20, completed: true },
-                    { id: 'referral', name: 'Referral', target: '1 org', targetCount: 1, achievedCount: 1, points: 20, completed: true }
-                ],
-                totalPoints: 80,
-                maxPoints: 100,
-                percentage: 80
-            },
-            {
-                id: 3,
-                userId: 4,
-                weekStart: weekInfo.start,
-                weekNumber: weekInfo.weekNumber,
-                year: new Date().getFullYear(),
-                kpi: [
-                    { id: 'meeting', name: 'Join Meeting', target: '1 jam', targetHours: 1, achievedHours: 1, points: 20, completed: true },
-                    { id: 'ononone', name: '1 on 1 Meeting', target: '1 jam', targetHours: 1, achievedHours: 0.5, points: 20, completed: false },
-                    { id: 'visitor', name: 'Bawa Visitor', target: '1 org', targetCount: 1, achievedCount: 1, points: 20, completed: true },
-                    { id: 'learning', name: 'Belajar (BB)', target: '1 jam', targetHours: 1, achievedHours: 1, points: 20, completed: true },
-                    { id: 'referral', name: 'Referral', target: '1 org', targetCount: 1, achievedCount: 0, points: 20, completed: false }
-                ],
-                totalPoints: 60,
-                maxPoints: 100,
-                percentage: 60
-            },
-            {
-                id: 4,
-                userId: 5,
-                weekStart: weekInfo.start,
-                weekNumber: weekInfo.weekNumber,
-                year: new Date().getFullYear(),
-                kpi: [
-                    { id: 'meeting', name: 'Join Meeting', target: '1 jam', targetHours: 1, achievedHours: 1, points: 20, completed: true },
-                    { id: 'ononone', name: '1 on 1 Meeting', target: '1 jam', targetHours: 1, achievedHours: 0, points: 20, completed: false },
-                    { id: 'visitor', name: 'Bawa Visitor', target: '1 org', targetCount: 1, achievedCount: 0, points: 20, completed: false },
-                    { id: 'learning', name: 'Belajar (BB)', target: '1 jam', targetHours: 1, achievedHours: 0.5, points: 20, completed: false },
-                    { id: 'referral', name: 'Referral', target: '1 org', targetCount: 1, achievedCount: 1, points: 20, completed: true }
-                ],
-                totalPoints: 40,
-                maxPoints: 100,
-                percentage: 40
-            },
-            {
-                id: 5,
-                userId: 6,
-                weekStart: weekInfo.start,
-                weekNumber: weekInfo.weekNumber,
-                year: new Date().getFullYear(),
-                kpi: [
-                    { id: 'meeting', name: 'Join Meeting', target: '1 jam', targetHours: 1, achievedHours: 0.5, points: 20, completed: false },
-                    { id: 'ononone', name: '1 on 1 Meeting', target: '1 jam', targetHours: 1, achievedHours: 0, points: 20, completed: false },
-                    { id: 'visitor', name: 'Bawa Visitor', target: '1 org', targetCount: 1, achievedCount: 0, points: 20, completed: false },
-                    { id: 'learning', name: 'Belajar (BB)', target: '1 jam', targetHours: 1, achievedHours: 0.5, points: 20, completed: false },
-                    { id: 'referral', name: 'Referral', target: '1 org', targetCount: 1, achievedCount: 0, points: 20, completed: false }
-                ],
-                totalPoints: 20,
-                maxPoints: 100,
-                percentage: 20
-            },
-            {
-                id: 6,
-                userId: 7,
-                weekStart: weekInfo.start,
-                weekNumber: weekInfo.weekNumber,
-                year: new Date().getFullYear(),
-                kpi: [
-                    { id: 'meeting', name: 'Join Meeting', target: '1 jam', targetHours: 1, achievedHours: 0.5, points: 20, completed: false },
-                    { id: 'ononone', name: '1 on 1 Meeting', target: '1 jam', targetHours: 1, achievedHours: 0, points: 20, completed: false },
-                    { id: 'visitor', name: 'Bawa Visitor', target: '1 org', targetCount: 1, achievedCount: 0, points: 20, completed: false },
-                    { id: 'learning', name: 'Belajar (BB)', target: '1 jam', targetHours: 1, achievedHours: 0.5, points: 20, completed: false },
-                    { id: 'referral', name: 'Referral', target: '1 org', targetCount: 1, achievedCount: 0, points: 20, completed: false }
-                ],
-                totalPoints: 20,
-                maxPoints: 100,
-                percentage: 20
-            },
-            {
-                id: 7,
-                userId: 8,
-                weekStart: weekInfo.start,
-                weekNumber: weekInfo.weekNumber,
-                year: new Date().getFullYear(),
-                kpi: [
-                    { id: 'meeting', name: 'Join Meeting', target: '1 jam', targetHours: 1, achievedHours: 0, points: 20, completed: false },
-                    { id: 'ononone', name: '1 on 1 Meeting', target: '1 jam', targetHours: 1, achievedHours: 0, points: 20, completed: false },
-                    { id: 'visitor', name: 'Bawa Visitor', target: '1 org', targetCount: 1, achievedCount: 0, points: 20, completed: false },
-                    { id: 'learning', name: 'Belajar (BB)', target: '1 jam', targetHours: 1, achievedHours: 0, points: 20, completed: false },
-                    { id: 'referral', name: 'Referral', target: '1 org', targetCount: 1, achievedCount: 0, points: 20, completed: false }
-                ],
-                totalPoints: 0,
-                maxPoints: 100,
-                percentage: 0
-            }
+            generateKPIForUser(2, 9),  // Dimas - 9 completed (hampir sempurna)
+            generateKPIForUser(3, 7),  // Sinta - 7 completed
+            generateKPIForUser(4, 5),  // Bambang - 5 completed
+            generateKPIForUser(5, 4),  // Maya - 4 completed
+            generateKPIForUser(6, 3),  // Agus - 3 completed
+            generateKPIForUser(7, 2),  // Rina - 2 completed
+            generateKPIForUser(8, 1)   // Dedi - 1 completed
         ];
 
         localStorage.setItem('chapter_kpi', JSON.stringify(kpiData));
@@ -1162,30 +1129,39 @@
                 let weekKPI = kpiData.find(k => k.userId === userId && k.weekNumber === currentWeek && k.year === currentYear);
                 
                 if (!weekKPI) {
+                    // Create default KPI with all incomplete
+                    const kpiItems = allPower10KPIs.map(kpi => ({
+                        id: kpi.id,
+                        name: kpi.name,
+                        desc: kpi.desc,
+                        category: kpi.category,
+                        target: kpi.target,
+                        targetHours: kpi.targetHours || null,
+                        targetCount: kpi.targetCount || null,
+                        achievedHours: kpi.targetHours ? 0 : null,
+                        achievedCount: kpi.targetCount ? 0 : null,
+                        points: kpi.points,
+                        completed: false,
+                        icon: kpi.icon
+                    }));
+
                     weekKPI = {
                         id: kpiData.length + 1,
                         userId: userId,
                         weekStart: getWeekRange().start,
                         weekNumber: currentWeek,
                         year: currentYear,
-                        kpi: [
-                            { id: 'meeting', name: 'Join Meeting', target: '1 jam', targetHours: 1, achievedHours: 0, points: 20, completed: false },
-                            { id: 'ononone', name: '1 on 1 Meeting', target: '1 jam', targetHours: 1, achievedHours: 0, points: 20, completed: false },
-                            { id: 'visitor', name: 'Bawa Visitor', target: '1 org', targetCount: 1, achievedCount: 0, points: 20, completed: false },
-                            { id: 'learning', name: 'Belajar (BB)', target: '1 jam', targetHours: 1, achievedHours: 0, points: 20, completed: false },
-                            { id: 'referral', name: 'Referral', target: '1 org', targetCount: 1, achievedCount: 0, points: 20, completed: false }
-                        ],
+                        kpi: kpiItems,
                         totalPoints: 0,
                         maxPoints: 100,
-                        percentage: 0
+                        percentage: 0,
+                        offlinePoints: 0,
+                        onlinePoints: 0
                     };
                     
                     kpiData.push(weekKPI);
                     localStorage.setItem('chapter_kpi', JSON.stringify(kpiData));
                 }
-                
-                weekKPI.totalPoints = weekKPI.kpi.reduce((sum, k) => sum + (k.completed ? k.points : 0), 0);
-                weekKPI.percentage = Math.round((weekKPI.totalPoints / weekKPI.maxPoints) * 100);
                 
                 return weekKPI;
             },
@@ -1208,8 +1184,11 @@
                             kpiItem.completed = kpiItem.achievedCount >= kpiItem.targetCount;
                         }
                         
+                        // Recalculate totals
                         kpiData[weekIndex].totalPoints = kpiData[weekIndex].kpi.reduce((sum, k) => sum + (k.completed ? k.points : 0), 0);
                         kpiData[weekIndex].percentage = Math.round((kpiData[weekIndex].totalPoints / kpiData[weekIndex].maxPoints) * 100);
+                        kpiData[weekIndex].offlinePoints = kpiData[weekIndex].kpi.filter(k => k.category === 'offline' && k.completed).reduce((sum, k) => sum + k.points, 0);
+                        kpiData[weekIndex].onlinePoints = kpiData[weekIndex].kpi.filter(k => k.category === 'online' && k.completed).reduce((sum, k) => sum + k.points, 0);
                         
                         localStorage.setItem('chapter_kpi', JSON.stringify(kpiData));
                         return kpiData[weekIndex];
@@ -1246,6 +1225,8 @@
                         ...member,
                         currentWeekPoints: weekKPI?.totalPoints || 0,
                         currentWeekPercentage: weekKPI?.percentage || 0,
+                        offlinePoints: weekKPI?.offlinePoints || 0,
+                        onlinePoints: weekKPI?.onlinePoints || 0,
                         kpiCompleted: weekKPI?.kpi?.filter(k => k.completed).length || 0
                     };
                 }).sort((a, b) => b.currentWeekPoints - a.currentWeekPoints);
@@ -1413,6 +1394,19 @@
                 }
                 
                 return validNotifications.length;
+            },
+
+            // Get Power 10 definitions
+            getPower10Offline: function() {
+                return power10Offline;
+            },
+
+            getPower10Online: function() {
+                return power10Online;
+            },
+
+            getAllPower10KPIs: function() {
+                return allPower10KPIs;
             }
         };
 
@@ -2753,17 +2747,26 @@
             );
         };
 
-        // ==================== KPI CARD ====================
+        // ==================== KPI CARD (POWER 10) ====================
         const KPICard = ({ kpi, onUpdate, disabled = false }) => {
             const getIcon = (id) => {
-                switch(id) {
-                    case 'meeting': return 'fas fa-users';
-                    case 'ononone': return 'fas fa-handshake';
-                    case 'visitor': return 'fas fa-user-plus';
-                    case 'learning': return 'fas fa-graduation-cap';
-                    case 'referral': return 'fas fa-share-alt';
-                    default: return 'fas fa-tasks';
-                }
+                const iconMap = {
+                    'hadir': 'fa-calendar-check',
+                    'temu': 'fa-handshake',
+                    'asah': 'fa-graduation-cap',
+                    'bagi': 'fa-share-alt',
+                    'ajak': 'fa-user-plus',
+                    'siar': 'fa-bullhorn',
+                    'sahut': 'fa-comment',
+                    'jaring': 'fa-users',
+                    'sapa': 'fa-envelope',
+                    'dorong': 'fa-video'
+                };
+                return iconMap[id] || 'fa-tasks';
+            };
+
+            const getCategoryColor = (category) => {
+                return category === 'offline' ? 'bg-blue-500' : 'bg-purple-600';
             };
 
             const handleIncrement = () => {
@@ -2792,19 +2795,33 @@
 
             const currentValue = kpi.targetHours !== undefined ? kpi.achievedHours : kpi.achievedCount;
             const targetValue = kpi.targetHours !== undefined ? kpi.targetHours : kpi.targetCount;
-            const unit = kpi.targetHours !== undefined ? 'jam' : 'org';
-            const percentage = Math.round((currentValue / targetValue) * 100);
+            const unit = kpi.targetHours !== undefined ? 'jam' : 'kali';
+            const percentage = Math.min(100, Math.round((currentValue / targetValue) * 100));
 
             return (
-                <div className={`rounded-xl p-3 sm:p-4 ${kpi.completed ? 'kpi-card-completed' : 'kpi-card-pending'} border ${kpi.completed ? 'border-green-200' : 'border-orange-200'}`}>
+                <div className={`rounded-xl p-3 sm:p-4 border ${
+                    kpi.category === 'offline' 
+                        ? kpi.completed ? 'kpi-card-completed border-green-200' : 'kpi-card-pending border-orange-200'
+                        : kpi.completed ? 'kpi-card-completed border-green-200' : 'kpi-card-pending border-orange-200'
+                }`}>
                     <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center">
-                            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${kpi.completed ? 'bg-green-600' : 'bg-orange-500'}`}>
-                                <i className={`${getIcon(kpi.id)} text-white text-sm sm:text-lg`}></i>
+                            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${getCategoryColor(kpi.category)}`}>
+                                <i className={`fas ${getIcon(kpi.id)} text-white text-sm sm:text-lg`}></i>
                             </div>
                             <div className="ml-2 sm:ml-3">
-                                <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{kpi.name}</h3>
-                                <p className="text-xs text-gray-600">Target: {targetValue} {unit}</p>
+                                <div className="flex items-center">
+                                    <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{kpi.name}</h3>
+                                    <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${
+                                        kpi.category === 'offline' 
+                                            ? 'bg-blue-100 text-blue-800' 
+                                            : 'bg-purple-100 text-purple-800'
+                                    }`}>
+                                        {kpi.category === 'offline' ? 'Offline' : 'Online'}
+                                    </span>
+                                </div>
+                                <p className="text-xs text-gray-600">{kpi.desc}</p>
+                                <p className="text-xs text-gray-500 mt-1">Target: {targetValue} {unit}</p>
                             </div>
                         </div>
                         <div className="text-right">
@@ -2905,7 +2922,7 @@
                             </p>
                             <p className="text-xs text-gray-500 mt-1">
                                 <i className="fas fa-info-circle mr-1"></i>
-                                KPI dihitung per minggu, reset setiap hari Senin jam 00:00 WIB
+                                Power 10 dihitung per minggu, reset setiap hari Senin jam 00:00 WIB
                             </p>
                         </div>
                     </div>
@@ -2950,9 +2967,9 @@
                     <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-6 sm:p-8">
                         <div className="text-center mb-8">
                             <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
-                                Chapter KPI
+                                Power 10 System
                             </h1>
-                            <p className="text-gray-600 mt-2 text-sm">Champion Performance Dashboard</p>
+                            <p className="text-gray-600 mt-2 text-sm">Networking Performance Dashboard</p>
                         </div>
                         
                         <form onSubmit={handleSubmit} className="space-y-6">
@@ -3362,6 +3379,10 @@
 
             const weekRange = `${weekInfo.monday.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} - ${weekInfo.sunday.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`;
 
+            // Group KPI by category
+            const offlineKPI = weekKPI?.kpi.filter(k => k.category === 'offline') || [];
+            const onlineKPI = weekKPI?.kpi.filter(k => k.category === 'online') || [];
+
             return (
                 <div className="content-container">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
@@ -3449,25 +3470,38 @@
 
                     <div className="grid grid-cols-2 gap-4 mb-6">
                         <Card className="bg-gradient-to-br from-blue-50 to-indigo-50">
-                            <p className="text-xs text-gray-600">Total Points</p>
-                            <p className="text-xl sm:text-2xl font-bold text-blue-600">{kpiSummary.totalPoints}</p>
-                            <p className="text-xs text-gray-500 mt-1">{kpiSummary.totalWeeks} minggu</p>
+                            <p className="text-xs text-gray-600">Offline Points</p>
+                            <p className="text-xl sm:text-2xl font-bold text-blue-600">{weekKPI?.offlinePoints || 0}/50</p>
+                            <p className="text-xs text-gray-500 mt-1">Hadir • Temu • Asah • Bagi • Ajak</p>
                         </Card>
-                        <Card className="bg-gradient-to-br from-green-50 to-emerald-50">
-                            <p className="text-xs text-gray-600">Rata-rata</p>
-                            <p className="text-xl sm:text-2xl font-bold text-green-600">{kpiSummary.avgPoints}/week</p>
+                        <Card className="bg-gradient-to-br from-purple-50 to-pink-50">
+                            <p className="text-xs text-gray-600">Online Points</p>
+                            <p className="text-xl sm:text-2xl font-bold text-purple-600">{weekKPI?.onlinePoints || 0}/50</p>
+                            <p className="text-xs text-gray-500 mt-1">Siar • Sahut • Jaring • Sapa • Dorong</p>
                         </Card>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 mb-6">
-                        <Card className="bg-gradient-to-br from-purple-50 to-pink-50">
-                            <p className="text-xs text-gray-600">Bawahan Langsung</p>
-                            <p className="text-xl sm:text-2xl font-bold text-purple-600">{downlineCount}</p>
-                            <p className="text-xs text-gray-500 mt-1">Total: {totalDownline} orang</p>
+                        <Card className="bg-gradient-to-br from-green-50 to-emerald-50">
+                            <p className="text-xs text-gray-600">Total Points</p>
+                            <p className="text-xl sm:text-2xl font-bold text-green-600">{kpiSummary.totalPoints}</p>
+                            <p className="text-xs text-gray-500 mt-1">{kpiSummary.totalWeeks} minggu</p>
                         </Card>
                         <Card className="bg-gradient-to-br from-orange-50 to-red-50">
+                            <p className="text-xs text-gray-600">Rata-rata</p>
+                            <p className="text-xl sm:text-2xl font-bold text-orange-600">{kpiSummary.avgPoints}/week</p>
+                        </Card>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                        <Card className="bg-gradient-to-br from-teal-50 to-cyan-50">
+                            <p className="text-xs text-gray-600">Bawahan Langsung</p>
+                            <p className="text-xl sm:text-2xl font-bold text-teal-600">{downlineCount}</p>
+                            <p className="text-xs text-gray-500 mt-1">Total: {totalDownline} orang</p>
+                        </Card>
+                        <Card className="bg-gradient-to-br from-amber-50 to-yellow-50">
                             <p className="text-xs text-gray-600">Level</p>
-                            <p className="text-xl sm:text-2xl font-bold text-orange-600">{currentUser?.level}</p>
+                            <p className="text-xl sm:text-2xl font-bold text-amber-600">{currentUser?.level}</p>
                             <p className="text-xs text-gray-500 mt-1">{currentUser?.position}</p>
                         </Card>
                     </div>
@@ -3496,17 +3530,37 @@
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-lg font-bold text-gray-900">
                                 <i className="fas fa-tasks mr-2 text-blue-600"></i>
-                                KPI Minggu Ini
+                                Power 10 Minggu Ini
                             </h2>
                             <div className="bg-blue-100 px-4 py-2 rounded-full">
                                 <span className="font-bold text-blue-800 text-sm">{weekKPI?.totalPoints}/100 pts</span>
                             </div>
                         </div>
                         
-                        <div className="space-y-4">
-                            {weekKPI?.kpi.map(kpi => (
-                                <KPICard key={kpi.id} kpi={kpi} onUpdate={handleUpdateKPI} />
-                            ))}
+                        {/* OFFLINE Section */}
+                        <div className="mb-6">
+                            <h3 className="power-section-title offline mb-3">
+                                <i className="fas fa-globe-asia mr-2"></i>
+                                Offline Power 5
+                            </h3>
+                            <div className="space-y-4">
+                                {offlineKPI.map(kpi => (
+                                    <KPICard key={kpi.id} kpi={kpi} onUpdate={handleUpdateKPI} />
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* ONLINE Section */}
+                        <div>
+                            <h3 className="power-section-title online mb-3">
+                                <i className="fas fa-wifi mr-2"></i>
+                                Online Power 5
+                            </h3>
+                            <div className="space-y-4">
+                                {onlineKPI.map(kpi => (
+                                    <KPICard key={kpi.id} kpi={kpi} onUpdate={handleUpdateKPI} />
+                                ))}
+                            </div>
                         </div>
                     </div>
 
@@ -3530,7 +3584,7 @@
                                 <p className="text-xl sm:text-2xl font-bold text-green-600">
                                     {allMembersKPI.filter(m => m.currentWeekPercentage === 100).length}
                                 </p>
-                                <p className="text-xs text-gray-600">100% KPI</p>
+                                <p className="text-xs text-gray-600">100% Power 10</p>
                             </div>
                         </div>
                     </Card>
@@ -3597,6 +3651,10 @@
                         <div className="text-right flex-shrink-0 ml-2">
                             <p className="text-lg sm:text-xl font-bold text-blue-600">{member.currentWeekPoints}</p>
                             <p className="text-xs text-gray-500">{member.currentWeekPercentage}%</p>
+                            <div className="flex items-center justify-end mt-1 space-x-1">
+                                <span className="text-xs px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded">O:{member.offlinePoints}</span>
+                                <span className="text-xs px-1.5 py-0.5 bg-purple-100 text-purple-800 rounded">N:{member.onlinePoints}</span>
+                            </div>
                         </div>
                     </Card>
 
@@ -3824,7 +3882,8 @@
                                             <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bisnis</th>
                                             <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chapter</th>
                                             <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Level</th>
-                                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Week {weekInfo.weekNumber}</th>
+                                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Offline</th>
+                                            <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Online</th>
                                             <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
                                         </tr>
                                     </thead>
@@ -3860,15 +3919,13 @@
                                                             <p className="text-sm">Level {member.level}</p>
                                                         </td>
                                                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                                            <div className="flex items-center">
-                                                                <span className="font-bold text-blue-600 mr-2 text-sm">{member.currentWeekPoints}</span>
-                                                                <div className="w-12 sm:w-16 bg-gray-200 rounded-full h-2">
-                                                                    <div className="bg-blue-600 rounded-full h-2" style={{ width: `${member.currentWeekPercentage}%` }}></div>
-                                                                </div>
-                                                            </div>
+                                                            <span className="font-bold text-blue-600 text-sm">{member.offlinePoints}/50</span>
                                                         </td>
                                                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                                                            <span className="font-medium text-gray-900 text-sm">{member.totalPoints || 0}</span>
+                                                            <span className="font-bold text-purple-600 text-sm">{member.onlinePoints}/50</span>
+                                                        </td>
+                                                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                                            <span className="font-bold text-green-600 text-sm">{member.currentWeekPoints}</span>
                                                         </td>
                                                     </tr>
                                                     <MemberProfileModal 
@@ -4114,7 +4171,7 @@
 
             return (
                 <div className="content-container">
-                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Leaderboard</h1>
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Leaderboard Power 10</h1>
                     <p className="text-sm text-gray-600 mb-4">Minggu {weekInfo.weekNumber} • {weekInfo.startFormatted} - {weekInfo.endFormatted}</p>
                     
                     <CutoffInfo weekInfo={weekInfo} />
@@ -4505,7 +4562,7 @@
                     <div className="flex justify-between items-center max-w-7xl mx-auto">
                         <div className="flex items-center min-w-0">
                             <h1 className="text-base sm:text-xl font-bold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent truncate">
-                                KPI Monitoring
+                                Power 10 System
                             </h1>
                             {currentUser?.role === 'super_admin' && (
                                 <span className="ml-2 sm:ml-3 bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full hidden sm:inline-block">
